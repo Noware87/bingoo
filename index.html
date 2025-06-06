@@ -114,6 +114,11 @@
             color: #000;
             font-weight: bold;
         }
+        .completed {
+            background: #00ff00;
+            color: #000;
+            font-weight: bold;
+        }
         #winner {
             font-size: 36px;
             font-weight: bold;
@@ -209,6 +214,8 @@
             currentNumberEl.textContent = '';
             historyEl.textContent = '';
             winnerEl.textContent = '';
+            // Ta bort alla markeringar och skapa nya brickor
+            generateCards(parseInt(playerCountSelect.value));
         }
 
         // Generera bingo-brickor: varje kolumn blandas inom sitt intervall
@@ -263,20 +270,24 @@
             }
         }
 
-        // Markera matchande nummer på brickorna
+        // Markera matchande nummer på brickorna och kontrollera bingo
         function markNumberOnCards(num) {
             const cards = cardsContainer.querySelectorAll('.card');
             cards.forEach(card => {
-                const cells = card.querySelectorAll('table td');
-                cells.forEach(cell => {
-                    if (parseInt(cell.textContent) === num) {
-                        cell.classList.add('marked');
-                    }
+                const rows = card.querySelectorAll('table tr');
+                rows.forEach((row, rowIndex) => {
+                    if (rowIndex === 0) return;
+                    const cells = row.querySelectorAll('td');
+                    cells.forEach(cell => {
+                        if (parseInt(cell.textContent) === num) {
+                            cell.classList.add('marked');
+                        }
+                    });
                 });
             });
         }
 
-        // Kontrollera bingo; returnerar index av vinnande bricka eller -1
+        // Kontrollera bingo; returnerar {cardIdx, rowIdx} eller null
         function checkBingo() {
             const cards = cardsContainer.querySelectorAll('.card');
             for (let i = 0; i < cards.length; i++) {
@@ -291,11 +302,21 @@
                         }
                     });
                     if (fullRow) {
-                        return i; // vinnande index
+                        return { cardIdx: i, rowIdx: rowIndex };
                     }
                 }
             }
-            return -1;
+            return null;
+        }
+
+        // Färgmarkera full rad grön
+        function highlightCompleted(cardIdx, rowIdx) {
+            const card = cardsContainer.querySelectorAll('.card')[cardIdx];
+            const row = card.querySelectorAll('table tr')[rowIdx];
+            const cells = row.querySelectorAll('td');
+            cells.forEach(cell => {
+                cell.classList.add('completed');
+            });
         }
 
         // Bestämmer bokstaven utifrån numret
@@ -324,19 +345,19 @@
             currentLetterEl.textContent = letter;
             currentNumberEl.textContent = num;
 
-            // Lägg till i historik om 0 spelare
             if (parseInt(playerCountSelect.value) === 0) {
                 historyEl.textContent = 'Dragna siffror: ' + drawn.join(', ');
             }
 
             if (parseInt(playerCountSelect.value) > 0) {
                 markNumberOnCards(num);
-                const winIdx = checkBingo();
-                if (winIdx !== -1) {
+                const result = checkBingo();
+                if (result) {
+                    highlightCompleted(result.cardIdx, result.rowIdx);
                     stopGame();
                     bingoSound.currentTime = 0;
                     bingoSound.play();
-                    winnerEl.textContent = `BINGO! Bricka ${winIdx + 1} vann!`;
+                    winnerEl.textContent = `BINGO! Bricka ${result.cardIdx + 1} vann!`;
                     return;
                 }
             }
