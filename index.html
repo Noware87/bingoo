@@ -13,39 +13,18 @@
             padding: 20px;
             background: #f0f0f0;
         }
-        #current {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 20px;
+        h1 {
+            margin-bottom: 10px;
         }
-        #current-letter {
-            font-size: 120px;
-            font-weight: bold;
-            line-height: 1;
+        #settings {
+            margin-bottom: 20px;
         }
-        #current-number {
-            font-size: 80px;
-            font-weight: bold;
-            line-height: 1;
-        }
-        #previous {
-            margin-top: 20px;
-            max-width: 600px;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-        }
-        .prev-item {
-            font-size: 24px;
-            text-align: center;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background: #fff;
+        #settings label,
+        #settings select {
+            font-size: 18px;
         }
         #controls {
-            margin-top: 20px;
+            margin-bottom: 20px;
             display: flex;
             gap: 10px;
         }
@@ -62,24 +41,107 @@
         button:hover {
             background: #0056b3;
         }
+        #cards {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .card {
+            background: #fff;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: scale(0.6);
+            transform-origin: top left;
+        }
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .card table {
+            border-collapse: collapse;
+        }
+        .card th,
+        .card td {
+            border: 1px solid #ccc;
+            width: 32px;
+            height: 32px;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 14px;
+            padding: 2px;
+        }
+        .card th {
+            background: #007bff;
+            color: #fff;
+            font-size: 16px;
+        }
+        .marked {
+            background: #ffeb3b;
+            color: #000;
+            font-weight: bold;
+        }
+        #current {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        #current-letter {
+            font-size: 120px;
+            font-weight: bold;
+            line-height: 1;
+        }
+        #current-number {
+            font-size: 80px;
+            font-weight: bold;
+            line-height: 1;
+        }
+        #winner {
+            font-size: 36px;
+            font-weight: bold;
+            color: #d9534f;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <h1>Bingo Caller</h1>
+    <!-- Knappsektionen högst upp -->
+    <div id="controls">
+        <div id="settings">
+            <label for="playerCount">Antal spelare (brickor): </label>
+            <select id="playerCount">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+        <button id="startBtn">Starta</button>
+        <button id="bingoBtn">BINGO</button>
+        <button id="resetBtn">Återställ</button>
+    </div>
+    <!-- Visar brickorna -->
+    <div id="cards"></div>
+    <!-- Visar vinnarmeddelande -->
+    <div id="winner"></div>
+    <!-- Visar aktuell siffra under brickorna -->
     <div id="current">
         <div id="current-letter">-</div>
         <div id="current-number"></div>
     </div>
-    <div id="controls">
-        <button id="startBtn">Starta</button>
-        <button id="bingoBtn">BINGO</button>
-    </div>
-    <div id="previous"></div>
 
-    <!-- Ljudfiler placeras i mappen 'audio' på samma nivå som denna fil:
-         - background.wav: bakgrundsmusik (loop)
-         - ding.wav: ljud när ny siffra dras
-         - bingo.wav: ljud när BINGO-knappen trycks -->
+    <!-- Ljudfiler i mp3-format -->
     <audio id="bgm" src="audio/background.mp3" loop></audio>
     <audio id="ding" src="audio/ding.mp3"></audio>
     <audio id="bingoSound" src="audio/bingo.mp3"></audio>
@@ -90,19 +152,31 @@
         let drawn = [];
         let intervalId = null;
 
+        const playerCountSelect = document.getElementById('playerCount');
         const currentLetterEl = document.getElementById('current-letter');
         const currentNumberEl = document.getElementById('current-number');
-        const previousEl = document.getElementById('previous');
         const startBtn = document.getElementById('startBtn');
         const bingoBtn = document.getElementById('bingoBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const cardsContainer = document.getElementById('cards');
+        const winnerEl = document.getElementById('winner');
         const bgm = document.getElementById('bgm');
         const ding = document.getElementById('ding');
         const bingoSound = document.getElementById('bingoSound');
 
-        // Starta bakgrundsmusiken när sidan laddas
+        // När antal spelare ändras, generera slumpade kort
+        playerCountSelect.addEventListener('change', () => {
+            const count = parseInt(playerCountSelect.value);
+            generateCards(count);
+            resetGame();
+        });
+
+        // Starta bakgrundsmusik
         window.addEventListener('load', () => {
+            const count = parseInt(playerCountSelect.value);
+            generateCards(count);
             bgm.volume = 0.3;
-            bgm.play().catch(() => console.log('Autoplay blockerat, klicka Starta för att spela musik'));
+            bgm.play().catch(() => console.log('Autoplay blockerat'));
         });
 
         // Initiera spelstatus
@@ -112,10 +186,91 @@
             drawn = [];
             currentLetterEl.textContent = '-';
             currentNumberEl.textContent = '';
-            previousEl.innerHTML = '';
+            winnerEl.textContent = '';
         }
 
-        // Bestämmer bokstaven (B, I, N, G eller O) utifrån numret
+        // Generera bingo-brickor med alla siffror slumpade
+        function generateCards(count) {
+            cardsContainer.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                const title = document.createElement('div');
+                title.classList.add('card-title');
+                title.textContent = `Bricka ${i + 1}`;
+                card.appendChild(title);
+                const table = document.createElement('table');
+                const headerRow = document.createElement('tr');
+                ['B', 'I', 'N', 'G', 'O'].forEach(letter => {
+                    const th = document.createElement('th');
+                    th.textContent = letter;
+                    headerRow.appendChild(th);
+                });
+                table.appendChild(headerRow);
+
+                // Skapa en kopia av 1-75, blanda och fyll 5x15
+                const nums = [...numbers];
+                shuffleArray(nums);
+                let idx = 0;
+                for (let row = 0; row < 15; row++) {
+                    const tr = document.createElement('tr');
+                    for (let col = 0; col < 5; col++) {
+                        const td = document.createElement('td');
+                        td.textContent = nums[idx];
+                        idx++;
+                        tr.appendChild(td);
+                    }
+                    table.appendChild(tr);
+                }
+                card.appendChild(table);
+                cardsContainer.appendChild(card);
+            }
+        }
+
+        // Hjälpfunktion för att blanda en array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Markera matchande nummer på brickorna
+        function markNumberOnCards(num) {
+            const cards = cardsContainer.querySelectorAll('.card');
+            cards.forEach(card => {
+                const cells = card.querySelectorAll('table td');
+                cells.forEach(cell => {
+                    if (parseInt(cell.textContent) === num) {
+                        cell.classList.add('marked');
+                    }
+                });
+            });
+        }
+
+        // Kontrollera bingo; returnerar index av vinnande bricka eller -1
+        function checkBingo() {
+            const cards = cardsContainer.querySelectorAll('.card');
+            for (let i = 0; i < cards.length; i++) {
+                const card = cards[i];
+                const rows = card.querySelectorAll('table tr');
+                for (let rowIndex = 1; rowIndex < rows.length; rowIndex++) {
+                    const cells = rows[rowIndex].querySelectorAll('td');
+                    let fullRow = true;
+                    cells.forEach(cell => {
+                        if (!cell.classList.contains('marked')) {
+                            fullRow = false;
+                        }
+                    });
+                    if (fullRow) {
+                        return i; // vinnande index
+                    }
+                }
+            }
+            return -1;
+        }
+
+        // Bestämmer bokstaven utifrån numret
         function getLetter(num) {
             if (num >= 1 && num <= 15) return 'B';
             if (num >= 16 && num <= 30) return 'I';
@@ -125,7 +280,7 @@
             return '';
         }
 
-        // Drar ett nytt nummer och visar det samt spelar upp ding-ljud
+        // Drar ett nytt nummer
         function drawNumber() {
             if (remaining.length === 0) {
                 stopGame();
@@ -141,28 +296,32 @@
             currentLetterEl.textContent = letter;
             currentNumberEl.textContent = num;
 
-            // Lägg till i tidigare dragna-listan
-            const prevItem = document.createElement('div');
-            prevItem.classList.add('prev-item');
-            prevItem.textContent = letter + num;
-            previousEl.appendChild(prevItem);
+            if (parseInt(playerCountSelect.value) > 0) {
+                markNumberOnCards(num);
+                const winIdx = checkBingo();
+                if (winIdx !== -1) {
+                    stopGame();
+                    bingoSound.currentTime = 0;
+                    bingoSound.play();
+                    winnerEl.textContent = `BINGO! Bricka ${winIdx + 1} vann!`;
+                    return;
+                }
+            }
 
-            // Spela ding-ljud
             ding.currentTime = 0;
             ding.play();
         }
 
-        // Startar spelet (drar direkt ett nummer och sedan var 10:e sekund)
+        // Startar spelet
         function startGame() {
             if (intervalId) return;
-            // Om bakgrundsmusiken inte spelas, starta den
+            resetGame();
             if (bgm.paused) bgm.play();
-            if (remaining.length === 0) resetGame();
             drawNumber();
             intervalId = setInterval(drawNumber, 10000);
         }
 
-        // Stoppar pågående dragningar
+        // Stoppar spelet
         function stopGame() {
             if (intervalId) {
                 clearInterval(intervalId);
@@ -170,22 +329,18 @@
             }
         }
 
-        // Eventlistener för Starta-knappen
-        startBtn.addEventListener('click', () => {
-            startGame();
-        });
-
-        // Eventlistener för BINGO-knappen
+        // Lyssnare för knappar
+        startBtn.addEventListener('click', startGame);
         bingoBtn.addEventListener('click', () => {
             stopGame();
-            // Spela bingo-ljud
             bingoSound.currentTime = 0;
             bingoSound.play();
-            // Återställ spelet efter en kort paus så ljudet hinner spelas
-            setTimeout(resetGame, 2000);
+            winnerEl.textContent = 'BINGO!';
+        });
+        resetBtn.addEventListener('click', () => {
+            resetGame();
         });
 
-        // Initiera vid laddning
         resetGame();
     </script>
 </body>
