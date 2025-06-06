@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bingo-spel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        #current {
+            font-size: 100px;
+            font-weight: bold;
+            margin: 20px;
+        }
+        #previous {
+            margin-top: 20px;
+            max-width: 600px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+        .prev-item {
+            font-size: 24px;
+            text-align: center;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #fff;
+        }
+        #controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            font-size: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: #fff;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bingo Caller</h1>
+    <div id="current">-</div>
+    <div id="controls">
+        <button id="startBtn">Starta</button>
+        <button id="bingoBtn">BINGO</button>
+    </div>
+    <div id="previous"></div>
+
+    <!-- Ljudfiler placeras i mappen 'audio' på samma nivå som denna fil:
+         - background.wav: bakgrundsmusik (loop)
+         - ding.wav: ljud när ny siffra dras
+         - bingo.wav: ljud när BINGO-knappen trycks -->
+    <audio id="bgm" src="audio/background.wav" loop></audio>
+    <audio id="ding" src="audio/ding.wav"></audio>
+    <audio id="bingoSound" src="audio/bingo.wav"></audio>
+
+    <script>
+        const numbers = Array.from({ length: 75 }, (_, i) => i + 1);
+        let remaining = [];
+        let drawn = [];
+        let intervalId = null;
+
+        const currentEl = document.getElementById('current');
+        const previousEl = document.getElementById('previous');
+        const startBtn = document.getElementById('startBtn');
+        const bingoBtn = document.getElementById('bingoBtn');
+        const bgm = document.getElementById('bgm');
+        const ding = document.getElementById('ding');
+        const bingoSound = document.getElementById('bingoSound');
+
+        // Starta bakgrundsmusiken när sidan laddas
+        window.addEventListener('load', () => {
+            bgm.volume = 0.3;
+            bgm.play().catch(() => console.log('Autoplay blockerat, klicka Starta för att spela musik'));
+        });
+
+        // Initiera spelstatus
+        function resetGame() {
+            stopGame();
+            remaining = [...numbers];
+            drawn = [];
+            currentEl.textContent = '-';
+            previousEl.empty();
+        }
+
+        // Bestämmer bokstaven (B, I, N, G eller O) utifrån numret
+        function getLetter(num) {
+            if (num >= 1 && num <= 15) return 'B';
+            if (num >= 16 && num <= 30) return 'I';
+            if (num >= 31 && num <= 45) return 'N';
+            if (num >= 46 && num <= 60) return 'G';
+            if (num >= 61 && num <= 75) return 'O';
+            return '';
+        }
+
+        // Drar ett nytt nummer och visar det samt spelar upp ding-ljud
+        function drawNumber() {
+            if (remaining.length === 0) {
+                stopGame();
+                currentEl.textContent = 'Klart!';
+                return;
+            }
+            const index = Math.floor(Math.random() * remaining.length);
+            const num = remaining.splice(index, 1)[0];
+            drawn.push(num);
+
+            const letter = getLetter(num);
+            const displayText = letter + num;
+            currentEl.textContent = displayText;
+
+            // Lägg till i tidigare dragna-listan
+            const prevItem = document.createElement('div');
+            prevItem.classList.add('prev-item');
+            prevItem.textContent = displayText;
+            previousEl.appendChild(prevItem);
+
+            // Spela ding-ljud
+            ding.currentTime = 0;
+            ding.play();
+        }
+
+        // Startar spelet (drar direkt ett nummer och sedan var 10:e sekund)
+        function startGame() {
+            if (intervalId) return;
+            // Om bakgrundsmusiken inte spelas, starta den
+            if (bgm.paused) bgm.play();
+            if (remaining.length === 0) resetGame();
+            drawNumber();
+            intervalId = setInterval(drawNumber, 10000);
+        }
+
+        // Stoppar pågående dragningar
+        function stopGame() {
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+            }
+        }
+
+        // Eventlistener för Starta-knappen
+        startBtn.addEventListener('click', () => {
+            startGame();
+        });
+
+        // Eventlistener för BINGO-knappen
+        bingoBtn.addEventListener('click', () => {
+            stopGame();
+            // Spela bingo-ljud
+            bingoSound.currentTime = 0;
+            bingoSound.play();
+            // Återställ spelet efter en kort paus så ljudet hinner spelas
+            setTimeout(resetGame, 2000);
+        });
+
+        // Initiera vid laddning
+        resetGame();
+    </script>
+</body>
+</html>
