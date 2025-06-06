@@ -14,9 +14,20 @@
             background: #f0f0f0;
         }
         #current {
-            font-size: 100px;
-            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             margin: 20px;
+        }
+        #current-letter {
+            font-size: 120px;
+            font-weight: bold;
+            line-height: 1;
+        }
+        #current-number {
+            font-size: 80px;
+            font-weight: bold;
+            line-height: 1;
         }
         #previous {
             margin-top: 20px;
@@ -55,7 +66,10 @@
 </head>
 <body>
     <h1>Bingo Caller</h1>
-    <div id="current">-</div>
+    <div id="current">
+        <div id="current-letter">-</div>
+        <div id="current-number"></div>
+    </div>
     <div id="controls">
         <button id="startBtn">Starta</button>
         <button id="bingoBtn">BINGO</button>
@@ -76,7 +90,8 @@
         let drawn = [];
         let intervalId = null;
 
-        const currentEl = document.getElementById('current');
+        const currentLetterEl = document.getElementById('current-letter');
+        const currentNumberEl = document.getElementById('current-number');
         const previousEl = document.getElementById('previous');
         const startBtn = document.getElementById('startBtn');
         const bingoBtn = document.getElementById('bingoBtn');
@@ -95,7 +110,8 @@
             stopGame();
             remaining = [...numbers];
             drawn = [];
-            currentEl.textContent = '-';
+            currentLetterEl.textContent = '-';
+            currentNumberEl.textContent = '';
             previousEl.innerHTML = '';
         }
 
@@ -113,7 +129,8 @@
         function drawNumber() {
             if (remaining.length === 0) {
                 stopGame();
-                currentEl.textContent = 'Klart!';
+                currentLetterEl.textContent = 'K';
+                currentNumberEl.textContent = 'lart!';
                 return;
             }
             const index = Math.floor(Math.random() * remaining.length);
@@ -121,13 +138,13 @@
             drawn.push(num);
 
             const letter = getLetter(num);
-            const displayText = letter + num;
-            currentEl.textContent = displayText;
+            currentLetterEl.textContent = letter;
+            currentNumberEl.textContent = num;
 
             // Lägg till i tidigare dragna-listan
             const prevItem = document.createElement('div');
             prevItem.classList.add('prev-item');
-            prevItem.textContent = displayText;
+            prevItem.textContent = letter + num;
             previousEl.appendChild(prevItem);
 
             // Spela ding-ljud
