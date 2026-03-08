@@ -253,6 +253,7 @@
       <select id="gameMode">
         <option value="standard">Standard Bingo</option>
         <option value="three-level">Bingo 3 nivåer</option>
+        <option value="three-level-adult">Bingo 3 nivå VUXEN</option>
       </select>
     </div>
 
@@ -294,10 +295,11 @@
       O: [61, 75]
     };
 
-    const numbers = Array.from({ length: 75 }, (_, i) => i + 1);
+    const allNumbers = Array.from({ length: 75 }, (_, i) => i + 1);
 
     let remaining = [];
     let drawn = [];
+    let removedNumbers = [];
     let intervalId = null;
     let speakEnabled = false;
 
@@ -355,23 +357,40 @@
       return gameModeSelect.value;
     }
 
+    function isThreeLevelMode() {
+      return getMode() === "three-level" || getMode() === "three-level-adult";
+    }
+
+    function isAdultMode() {
+      return getMode() === "three-level-adult";
+    }
+
     function updateStatusBar() {
       if (getMode() === "standard") {
         statusBarEl.textContent = gameFinished ? "Standard Bingo - färdigt" : "Standard Bingo";
         return;
       }
 
-      if (gameFinished) {
-        statusBarEl.textContent = "Bingo 3 nivåer - färdigt";
+      if (getMode() === "three-level") {
+        if (gameFinished) {
+          statusBarEl.textContent = "Bingo 3 nivåer - färdigt";
+        } else if (waitingForContinue) {
+          statusBarEl.textContent = `Bingo ${currentLevel} klart - tryck Fortsätt`;
+        } else {
+          statusBarEl.textContent = `Bingo 3 nivåer - spelar om Bingo ${currentLevel}`;
+        }
         return;
       }
 
-      if (waitingForContinue) {
-        statusBarEl.textContent = `Bingo ${currentLevel} klart - tryck Fortsätt`;
-        return;
+      if (getMode() === "three-level-adult") {
+        if (gameFinished) {
+          statusBarEl.textContent = "Bingo 3 nivå VUXEN - färdigt";
+        } else if (waitingForContinue) {
+          statusBarEl.textContent = `Bingo ${currentLevel} VUXEN klart - tryck Fortsätt`;
+        } else {
+          statusBarEl.textContent = `Bingo 3 nivå VUXEN - spelar om Bingo ${currentLevel}`;
+        }
       }
-
-      statusBarEl.textContent = `Bingo 3 nivåer - spelar om Bingo ${currentLevel}`;
     }
 
     function getDelay() {
@@ -383,10 +402,23 @@
       startGame();
     }
 
+    function createRemainingNumbers() {
+      if (!isAdultMode()) {
+        removedNumbers = [];
+        return [...allNumbers];
+      }
+
+      const shuffled = [...allNumbers];
+      shuffle(shuffled);
+      removedNumbers = shuffled.slice(0, 15).sort((a, b) => a - b);
+
+      return shuffled.slice(15);
+    }
+
     function resetGame() {
       stopGame();
 
-      remaining = [...numbers];
+      remaining = createRemainingNumbers();
       drawn = [];
       currentLevel = 1;
       waitingForContinue = false;
@@ -404,6 +436,7 @@
       generateCards(parseInt(playerCountSelect.value, 10));
       updateCardScale();
       updateStatusBar();
+      updateHistory();
     }
 
     function generateCards(count) {
@@ -476,7 +509,7 @@
       if (intervalId || waitingForContinue || gameFinished) return;
 
       if (drawn.length === 0) {
-        remaining = [...numbers];
+        remaining = createRemainingNumbers();
         drawn = [];
         winnerTopEl.textContent = "";
         currentLevel = 1;
@@ -512,8 +545,16 @@
 
       if (!remaining.length) {
         stopGame();
-        winnerTopEl.textContent = "Alla nummer är dragna.";
+        gameFinished = true;
+
+        if (isAdultMode()) {
+          winnerTopEl.textContent = "Ingen vinnare. Starta nytt spel.";
+        } else {
+          winnerTopEl.textContent = "Alla nummer är dragna.";
+        }
+
         newGameBtn.style.display = "inline-block";
+        updateStatusBar();
         return;
       }
 
@@ -543,13 +584,18 @@
     }
 
     function updateHistory() {
-      if (!drawn.length) {
-        historyEl.textContent = "";
-        return;
+      const drawnFormatted = drawn.map((num) => `${getLetter(num)}${num}`);
+
+      let text = drawnFormatted.length
+        ? "Dragna nummer: " + drawnFormatted.join(" - ")
+        : "";
+
+      if (isAdultMode() && removedNumbers.length) {
+        const removedFormatted = removedNumbers.map((num) => `${getLetter(num)}${num}`);
+        text += (text ? " | " : "") + "Borttagna nummer: " + removedFormatted.join(" - ");
       }
 
-      const formatted = drawn.map((num) => `${getLetter(num)}${num}`);
-      historyEl.textContent = "Dragna nummer: " + formatted.join(" - ");
+      historyEl.textContent = text;
     }
 
     function playDrawSound(letter, num) {
@@ -733,10 +779,11 @@
         return;
       }
 
+      const modeLabel = isAdultMode() ? " VUXEN" : "";
       winnerTopEl.textContent =
         result.winners.length === 1
-          ? `BINGO ${result.level}! ${winnerText} fick bingo.`
-          : `BINGO ${result.level}! Delad vinst: ${winnerText}.`;
+          ? `BINGO ${result.level}${modeLabel}! ${winnerText} fick bingo.`
+          : `BINGO ${result.level}${modeLabel}! Delad vinst: ${winnerText}.`;
 
       if (result.final) {
         gameFinished = true;
@@ -764,8 +811,12 @@
       updateStatusBar();
 
       if (!remaining.length) {
-        winnerTopEl.textContent = "Inga fler nummer kvar att dra.";
+        gameFinished = true;
+        winnerTopEl.textContent = isAdultMode()
+          ? "Ingen vinnare. Starta nytt spel."
+          : "Inga fler nummer kvar att dra.";
         newGameBtn.style.display = "inline-block";
+        updateStatusBar();
         return;
       }
 
