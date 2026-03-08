@@ -584,16 +584,14 @@
     }
 
     function updateHistory() {
-      const drawnFormatted = drawn.map((num) => `${getLetter(num)}${num}`);
+  if (!drawn.length) {
+    historyEl.textContent = "";
+    return;
+  }
 
-      let text = drawnFormatted.length
-        ? "Dragna nummer: " + drawnFormatted.join(" - ")
-        : "";
-
-      if (isAdultMode() && removedNumbers.length) {
-        const removedFormatted = removedNumbers.map((num) => `${getLetter(num)}${num}`);
-        text += (text ? " | " : "") + "Borttagna nummer: " + removedFormatted.join(" - ");
-      }
+  const formatted = drawn.map((num) => `${getLetter(num)}${num}`);
+  historyEl.textContent = "Dragna nummer: " + formatted.join(" - ");
+}
 
       historyEl.textContent = text;
     }
