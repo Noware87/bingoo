@@ -357,12 +357,12 @@
       return gameModeSelect.value;
     }
 
-    function isThreeLevelMode() {
-      return getMode() === "three-level" || getMode() === "three-level-adult";
-    }
-
     function isAdultMode() {
       return getMode() === "three-level-adult";
+    }
+
+    function isThreeLevelMode() {
+      return getMode() === "three-level" || getMode() === "three-level-adult";
     }
 
     function updateStatusBar() {
@@ -463,7 +463,9 @@
         const cols = {};
         Object.entries(ranges).forEach(([letter, [start, end]]) => {
           const arr = [];
-          for (let n = start; n <= end; n++) arr.push(n);
+          for (let n = start; n <= end; n++) {
+            arr.push(n);
+          }
           shuffle(arr);
           cols[letter] = arr;
         });
@@ -506,7 +508,9 @@
     }
 
     function startGame() {
-      if (intervalId || waitingForContinue || gameFinished) return;
+      if (intervalId || waitingForContinue || gameFinished) {
+        return;
+      }
 
       if (drawn.length === 0) {
         remaining = createRemainingNumbers();
@@ -584,16 +588,13 @@
     }
 
     function updateHistory() {
-  if (!drawn.length) {
-    historyEl.textContent = "";
-    return;
-  }
+      if (!drawn.length) {
+        historyEl.textContent = "";
+        return;
+      }
 
-  const formatted = drawn.map((num) => `${getLetter(num)}${num}`);
-  historyEl.textContent = "Dragna nummer: " + formatted.join(" - ");
-}
-
-      historyEl.textContent = text;
+      const formatted = drawn.map((num) => `${getLetter(num)}${num}`);
+      historyEl.textContent = "Dragna nummer: " + formatted.join(" - ");
     }
 
     function playDrawSound(letter, num) {
@@ -798,7 +799,9 @@
     }
 
     function continueAfterLevel() {
-      if (!waitingForContinue || gameFinished) return;
+      if (!waitingForContinue || gameFinished) {
+        return;
+      }
 
       waitingForContinue = false;
       currentLevel += 1;
