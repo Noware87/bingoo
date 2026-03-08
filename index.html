@@ -96,7 +96,7 @@
       flex-direction: column;
       align-items: center;
       gap: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 16px;
     }
 
     #current {
@@ -118,19 +118,19 @@
       line-height: 1;
     }
 
+    #winnerTop {
+      font-size: 24px;
+      font-weight: bold;
+      color: #d9534f;
+      text-align: center;
+      min-height: 32px;
+    }
+
     #currentButtons {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
       justify-content: center;
-    }
-
-    #history {
-      margin-bottom: 20px;
-      font-size: 18px;
-      text-align: center;
-      max-width: 1000px;
-      line-height: 1.5;
     }
 
     #cards {
@@ -149,6 +149,13 @@
       padding: 5px;
       transform: scale(0.6);
       transform-origin: top left;
+      transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .card.winner-card {
+      background: #ff4d4d;
+      border-color: #c40000;
+      box-shadow: 0 0 16px rgba(196, 0, 0, 0.35);
     }
 
     .card-title {
@@ -188,13 +195,37 @@
       font-weight: bold;
     }
 
-    #winner {
-      font-size: 24px;
-      font-weight: bold;
-      color: #d9534f;
+    #history {
       margin-top: 10px;
+      font-size: 18px;
       text-align: center;
-      min-height: 32px;
+      max-width: 1100px;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    @media (max-width: 900px) {
+      .card {
+        transform: scale(0.52);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        transform: scale(0.46);
+      }
+
+      #current-letter {
+        font-size: 58px;
+      }
+
+      #current-number {
+        font-size: 38px;
+      }
+
+      #winnerTop {
+        font-size: 20px;
+      }
     }
   </style>
 </head>
@@ -205,18 +236,18 @@
     <div id="settings">
       <label for="playerCount">Spelare:</label>
       <select id="playerCount">
-  <option value="0">0</option>
-  <option value="1">1</option>
-  <option value="2" selected>2</option>
-  <option value="3">3</option>
-  <option value="4">4</option>
-  <option value="5">5</option>
-  <option value="6">6</option>
-  <option value="7">7</option>
-  <option value="8">8</option>
-  <option value="9">9</option>
-  <option value="10">10</option>
-</select>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2" selected>2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+      </select>
 
       <label for="gameMode">Läge:</label>
       <select id="gameMode">
@@ -239,15 +270,16 @@
       <div id="current-number"></div>
     </div>
 
+    <div id="winnerTop"></div>
+
     <div id="currentButtons">
       <button id="continueBtn">Fortsätt</button>
       <button id="newGameBtn">Starta nytt spel</button>
     </div>
   </div>
 
-  <div id="history"></div>
   <div id="cards"></div>
-  <div id="winner"></div>
+  <div id="history"></div>
 
   <audio id="bgm" src="audio/background.mp3" loop autoplay></audio>
   <audio id="ding" src="audio/ding.mp3"></audio>
@@ -286,7 +318,7 @@
     const currentNumberEl = document.getElementById("current-number");
     const historyEl = document.getElementById("history");
     const cardsContainer = document.getElementById("cards");
-    const winnerEl = document.getElementById("winner");
+    const winnerTopEl = document.getElementById("winnerTop");
     const statusBarEl = document.getElementById("statusBar");
 
     const bgm = document.getElementById("bgm");
@@ -310,7 +342,7 @@
       stopGame();
       bingoSound.currentTime = 0;
       bingoSound.play().catch(() => {});
-      winnerEl.textContent = "BINGO!";
+      winnerTopEl.textContent = "BINGO!";
     });
 
     window.addEventListener("load", () => {
@@ -363,13 +395,14 @@
       currentLetterEl.textContent = "-";
       currentNumberEl.textContent = "";
       historyEl.textContent = "";
-      winnerEl.textContent = "";
+      winnerTopEl.textContent = "";
       cardsContainer.innerHTML = "";
 
       continueBtn.style.display = "none";
       newGameBtn.style.display = "none";
 
       generateCards(parseInt(playerCountSelect.value, 10));
+      updateCardScale();
       updateStatusBar();
     }
 
@@ -397,9 +430,7 @@
         const cols = {};
         Object.entries(ranges).forEach(([letter, [start, end]]) => {
           const arr = [];
-          for (let n = start; n <= end; n++) {
-            arr.push(n);
-          }
+          for (let n = start; n <= end; n++) arr.push(n);
           shuffle(arr);
           cols[letter] = arr;
         });
@@ -421,6 +452,19 @@
       }
     }
 
+    function updateCardScale() {
+      const count = parseInt(playerCountSelect.value, 10);
+      let scale = 0.6;
+
+      if (count >= 9) scale = 0.42;
+      else if (count >= 7) scale = 0.47;
+      else if (count >= 5) scale = 0.53;
+
+      cardsContainer.querySelectorAll(".card").forEach((card) => {
+        card.style.transform = `scale(${scale})`;
+      });
+    }
+
     function shuffle(arr) {
       for (let i = arr.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -429,14 +473,12 @@
     }
 
     function startGame() {
-      if (intervalId || waitingForContinue || gameFinished) {
-        return;
-      }
+      if (intervalId || waitingForContinue || gameFinished) return;
 
       if (drawn.length === 0) {
         remaining = [...numbers];
         drawn = [];
-        winnerEl.textContent = "";
+        winnerTopEl.textContent = "";
         currentLevel = 1;
         waitingForContinue = false;
         gameFinished = false;
@@ -444,6 +486,7 @@
         newGameBtn.style.display = "none";
         clearHighlights();
         unmarkAllCards();
+        clearWinnerCards();
         updateHistory();
       }
 
@@ -469,10 +512,8 @@
 
       if (!remaining.length) {
         stopGame();
-        winnerEl.textContent = "Alla nummer är dragna.";
-        if (getMode() === "three-level") {
-          newGameBtn.style.display = "inline-block";
-        }
+        winnerTopEl.textContent = "Alla nummer är dragna.";
+        newGameBtn.style.display = "inline-block";
         return;
       }
 
@@ -556,6 +597,24 @@
       });
     }
 
+    function clearWinnerCards() {
+      cardsContainer.querySelectorAll(".winner-card").forEach((card) => {
+        card.classList.remove("winner-card");
+      });
+    }
+
+    function markWinnerCards(winners) {
+      clearWinnerCards();
+      const cards = cardsContainer.querySelectorAll(".card");
+
+      winners.forEach((winner) => {
+        const card = cards[winner.cardIndex];
+        if (card) {
+          card.classList.add("winner-card");
+        }
+      });
+    }
+
     function getCompletedRowsForCard(cardEl) {
       const rows = Array.from(cardEl.querySelectorAll("tr")).slice(1);
       const completedRows = [];
@@ -624,6 +683,7 @@
 
       if (getMode() === "standard") {
         const winners = getWinnersForLevel(1);
+
         if (winners.length > 0) {
           return {
             hit: true,
@@ -632,6 +692,7 @@
             final: true
           };
         }
+
         return { hit: false };
       }
 
@@ -652,6 +713,7 @@
     function handleWinResult(result) {
       stopGame();
       updateCompletedRowHighlights();
+      markWinnerCards(result.winners);
 
       bingoSound.currentTime = 0;
       bingoSound.play().catch(() => {});
@@ -659,7 +721,7 @@
       const winnerText = formatWinnerNames(result.winners);
 
       if (getMode() === "standard") {
-        winnerEl.textContent =
+        winnerTopEl.textContent =
           result.winners.length === 1
             ? `BINGO! ${winnerText} vann!`
             : `BINGO! Delad vinst: ${winnerText}!`;
@@ -671,7 +733,7 @@
         return;
       }
 
-      winnerEl.textContent =
+      winnerTopEl.textContent =
         result.winners.length === 1
           ? `BINGO ${result.level}! ${winnerText} fick bingo.`
           : `BINGO ${result.level}! Delad vinst: ${winnerText}.`;
@@ -691,19 +753,18 @@
     }
 
     function continueAfterLevel() {
-      if (!waitingForContinue || gameFinished) {
-        return;
-      }
+      if (!waitingForContinue || gameFinished) return;
 
       waitingForContinue = false;
       currentLevel += 1;
       continueBtn.style.display = "none";
-      winnerEl.textContent = "";
+      winnerTopEl.textContent = "";
+      clearWinnerCards();
 
       updateStatusBar();
 
       if (!remaining.length) {
-        winnerEl.textContent = "Inga fler nummer kvar att dra.";
+        winnerTopEl.textContent = "Inga fler nummer kvar att dra.";
         newGameBtn.style.display = "inline-block";
         return;
       }
