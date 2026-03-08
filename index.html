@@ -118,6 +118,14 @@
       line-height: 1;
     }
 
+    #remainingCount {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+      min-height: 24px;
+    }
+
     #winnerTop {
       font-size: 24px;
       font-weight: bold;
@@ -271,6 +279,7 @@
       <div id="current-number"></div>
     </div>
 
+    <div id="remainingCount"></div>
     <div id="winnerTop"></div>
 
     <div id="currentButtons">
@@ -318,6 +327,7 @@
 
     const currentLetterEl = document.getElementById("current-letter");
     const currentNumberEl = document.getElementById("current-number");
+    const remainingCountEl = document.getElementById("remainingCount");
     const historyEl = document.getElementById("history");
     const cardsContainer = document.getElementById("cards");
     const winnerTopEl = document.getElementById("winnerTop");
@@ -386,10 +396,18 @@
         if (gameFinished) {
           statusBarEl.textContent = "Bingo 3 nivå VUXEN - färdigt";
         } else if (waitingForContinue) {
-          statusBarEl.textContent = `Bingo ${currentLevel} VUXEN klart - tryck Fortsätt`;
+          statusBarEl.textContent = `Bingo ${currentLevel} klart - tryck Fortsätt`;
         } else {
           statusBarEl.textContent = `Bingo 3 nivå VUXEN - spelar om Bingo ${currentLevel}`;
         }
+      }
+    }
+
+    function updateRemainingCount() {
+      if (isAdultMode()) {
+        remainingCountEl.textContent = `Kvar att dra: ${remaining.length}`;
+      } else {
+        remainingCountEl.textContent = "";
       }
     }
 
@@ -411,7 +429,6 @@
       const shuffled = [...allNumbers];
       shuffle(shuffled);
       removedNumbers = shuffled.slice(0, 15).sort((a, b) => a - b);
-
       return shuffled.slice(15);
     }
 
@@ -437,6 +454,7 @@
       updateCardScale();
       updateStatusBar();
       updateHistory();
+      updateRemainingCount();
     }
 
     function generateCards(count) {
@@ -525,6 +543,7 @@
         unmarkAllCards();
         clearWinnerCards();
         updateHistory();
+        updateRemainingCount();
       }
 
       drawNumber();
@@ -559,12 +578,15 @@
 
         newGameBtn.style.display = "inline-block";
         updateStatusBar();
+        updateRemainingCount();
         return;
       }
 
       const idx = Math.floor(Math.random() * remaining.length);
       const num = remaining.splice(idx, 1)[0];
       drawn.push(num);
+
+      updateRemainingCount();
 
       const letter = getLetter(num);
       currentLetterEl.textContent = letter;
@@ -765,24 +787,18 @@
 
       const winnerText = formatWinnerNames(result.winners);
 
-      if (getMode() === "standard") {
-        winnerTopEl.textContent =
-          result.winners.length === 1
-            ? `BINGO! ${winnerText} vann!`
-            : `BINGO! Delad vinst: ${winnerText}!`;
+      winnerTopEl.textContent =
+        result.winners.length === 1
+          ? `BINGO! ${winnerText} fick bingo.`
+          : `BINGO! Delad vinst: ${winnerText}.`;
 
+      if (getMode() === "standard") {
         gameFinished = true;
         continueBtn.style.display = "none";
         newGameBtn.style.display = "inline-block";
         updateStatusBar();
         return;
       }
-
-      const modeLabel = isAdultMode() ? " VUXEN" : "";
-      winnerTopEl.textContent =
-        result.winners.length === 1
-          ? `BINGO ${result.level}${modeLabel}! ${winnerText} fick bingo.`
-          : `BINGO ${result.level}${modeLabel}! Delad vinst: ${winnerText}.`;
 
       if (result.final) {
         gameFinished = true;
@@ -818,6 +834,7 @@
           : "Inga fler nummer kvar att dra.";
         newGameBtn.style.display = "inline-block";
         updateStatusBar();
+        updateRemainingCount();
         return;
       }
 
