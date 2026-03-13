@@ -963,14 +963,28 @@
       renderAdultStats();
     }
 
+    function moveRemainderToNextPot(level, remainder) {
+      if (remainder <= 0) return;
+
+      if (level === 1) {
+        adultSession.pots[2] += remainder;
+      } else if (level === 2) {
+        adultSession.pots[3] += remainder;
+      } else {
+        adultSession.pots[3] += remainder;
+      }
+    }
+
     function distributeRoundMoney(totalMoney) {
       if (!adultSession.moneyEnabled || totalMoney <= 0) return;
 
       totalMoney = Math.floor(totalMoney);
 
       const pot1Add = Math.floor(totalMoney * 0.2);
-      const pot2Add = Math.floor(totalMoney * 0.3);
-      const pot3Add = totalMoney - pot1Add - pot2Add;
+      const remainingAfterPot1 = totalMoney - pot1Add;
+
+      const pot2Add = Math.floor(remainingAfterPot1 * 0.375);
+      const pot3Add = remainingAfterPot1 - pot2Add;
 
       adultSession.pots[1] += pot1Add;
       adultSession.pots[2] += pot2Add;
@@ -1055,27 +1069,42 @@
       let payoutText = "";
 
       if (adultSession.moneyEnabled) {
-        const totalPot = Math.floor(adultSession.pots[level]);
+        const totalPot = adultSession.pots[level];
         const winnerCount = winners.length;
-        const share = winnerCount > 0 ? Math.floor(totalPot / winnerCount) : 0;
-        const remainder = totalPot - (share * winnerCount);
+
+        let share = 0;
+        let remainder = 0;
+
+        if (winnerCount > 0) {
+          share = Math.floor(totalPot / winnerCount);
+          remainder = totalPot - (share * winnerCount);
+        }
 
         winners.forEach(w => {
           const p = w.playerIndex;
+
           if (level === 1) adultSession.stats[p].wins1 += 1;
           if (level === 2) adultSession.stats[p].wins2 += 1;
           if (level === 3) adultSession.stats[p].wins3 += 1;
+
           adultSession.stats[p].won += share;
         });
 
-        adultSession.pots[level] = remainder;
+        adultSession.pots[level] = 0;
+        moveRemainderToNextPot(level, remainder);
 
         if (winnerCount === 1) {
-          payoutText = ` Vinsten blev ${share} kr.`;
+          payoutText = ` Vinsten blev ${totalPot} kr.`;
         } else {
           payoutText = ` Potten delades: ${share} kr per vinnande bricka.`;
           if (remainder > 0) {
-            payoutText += ` ${remainder} kr ligger kvar i potten.`;
+            if (level === 1) {
+              payoutText += ` ${remainder} kr flyttades till Pot 2.`;
+            } else if (level === 2) {
+              payoutText += ` ${remainder} kr flyttades till Pot 3.`;
+            } else {
+              payoutText += ` ${remainder} kr ligger kvar i Pot 3.`;
+            }
           }
         }
       }
