@@ -1042,7 +1042,7 @@
 
       const remainingEligible = allNumbers.filter(num => !adultHiddenRemoved.includes(num));
       shuffle(remainingEligible);
-      remaining = remainingEligible.slice(0, 50);
+      remaining = [...remainingEligible];
 
       renderAdultCardsPreview();
       updateRemainingCount();
@@ -1161,7 +1161,7 @@
       adultRoundEnded = true;
       gameFinished = false;
       adultRoundPrepared = false;
-      winnerTopEl.textContent = "Rundan är slut. Ingen BINGO 3 innan 50 drag. Starta nästa runda för att fylla på potterna.";
+      winnerTopEl.textContent = "Rundan är slut. Ingen BINGO 3 innan 60 drag. Starta nästa runda för att fylla på potterna.";
       continueBtn.style.display = "none";
       actionBtn.style.display = "inline-block";
       actionBtn.textContent = "Nästa runda";
