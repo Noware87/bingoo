@@ -474,6 +474,7 @@
     let adultHiddenRemoved = [];
     let adultRoundEnded = false;
     let adultRoundPaid = { 1: false, 2: false, 3: false };
+    let adultRoundPrepared = false;
 
     const adultSession = {
       round: 1,
@@ -958,6 +959,7 @@
       adultRoundPaid = { 1: false, 2: false, 3: false };
       adultHiddenRemoved = [];
       adultRoundEnded = false;
+      adultRoundPrepared = false;
 
       renderAdultPots();
       renderAdultStats();
@@ -1015,6 +1017,7 @@
         remaining = [];
         updateRemainingCount();
         winnerTopEl.textContent = "Välj minst en bricka i vuxenläget.";
+        adultRoundPrepared = false;
         return false;
       }
 
@@ -1046,6 +1049,8 @@
       updateHistory();
       updateCompletedRowHighlights();
       updateStatusBar();
+
+      adultRoundPrepared = true;
       return true;
     }
 
@@ -1155,6 +1160,7 @@
       waitingForContinue = false;
       adultRoundEnded = true;
       gameFinished = false;
+      adultRoundPrepared = false;
       winnerTopEl.textContent = "Rundan är slut. Ingen BINGO 3 innan 50 drag. Starta nästa runda för att fylla på potterna.";
       continueBtn.style.display = "none";
       actionBtn.style.display = "inline-block";
@@ -1166,8 +1172,18 @@
 
     function startNextAdultRound() {
       adultSession.round += 1;
+      stopGame();
+      drawn = [];
+      remaining = [];
+      waitingForContinue = false;
+      adultRoundEnded = false;
+      gameFinished = false;
+      adultRoundPaid = { 1: false, 2: false, 3: false };
+      adultRoundPrepared = false;
       resetTopArea();
-      prepareAdultRound();
+      clearWinnerCards();
+      updateStatusBar();
+      updateRemainingCount();
     }
 
     function evaluateNormalWinState() {
@@ -1302,7 +1318,7 @@
     function startAdultGame() {
       if (intervalId || waitingForContinue || gameFinished || adultRoundEnded) return;
 
-      if (!drawn.length) {
+      if (!adultRoundPrepared) {
         const ok = prepareAdultRound();
         if (!ok) return;
       }
@@ -1387,6 +1403,7 @@
       gameFinished = false;
       currentLevel = 1;
       adultRoundEnded = false;
+      adultRoundPrepared = false;
 
       resetTopArea();
       cardsContainer.innerHTML = "";
@@ -1425,7 +1442,7 @@
     });
 
     moneyEnabledInput.addEventListener("change", () => {
-      if (isAdultMode() && !isAdultRoundRunning()) {
+      if (isAdultMode() && !isAdultRoundRunning() && !adultRoundPrepared) {
         adultSession.moneyEnabled = moneyEnabledInput.checked;
         renderAdultPots();
       }
