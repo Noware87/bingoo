@@ -566,10 +566,6 @@
       return Array.from(selects).map(sel => parseInt(sel.value, 10));
     }
 
-    function totalAdultCardsSelected() {
-      return getAdultSelections().reduce((sum, val) => sum + val, 0);
-    }
-
     function isAdultRoundRunning() {
       return drawn.length > 0 || intervalId || waitingForContinue;
     }
@@ -902,7 +898,7 @@
         box.className = `pot-box pot${level}`;
 
         const amount = adultSession.moneyEnabled
-          ? `${adultSession.pots[level].toFixed(2)} kr`
+          ? `${adultSession.pots[level]} kr`
           : "Avstängt";
 
         const roundState = adultRoundPaid[level] ? "Utbetald denna runda" : "Öppen denna runda";
@@ -920,11 +916,11 @@
         <tr>
           <td>Spelare ${idx + 1}</td>
           <td>${stat.bought}</td>
-          <td>${stat.spent.toFixed(2)} kr</td>
+          <td>${stat.spent} kr</td>
           <td>${stat.wins1}</td>
           <td>${stat.wins2}</td>
           <td>${stat.wins3}</td>
-          <td>${stat.won.toFixed(2)} kr</td>
+          <td>${stat.won} kr</td>
         </tr>
       `).join("");
 
@@ -970,13 +966,15 @@
     function distributeRoundMoney(totalMoney) {
       if (!adultSession.moneyEnabled || totalMoney <= 0) return;
 
-      const pot1Add = +(totalMoney * 0.2).toFixed(2);
-      const pot2Add = +(totalMoney * 0.3).toFixed(2);
-      const pot3Add = +(totalMoney - pot1Add - pot2Add).toFixed(2);
+      totalMoney = Math.floor(totalMoney);
 
-      adultSession.pots[1] = +(adultSession.pots[1] + pot1Add).toFixed(2);
-      adultSession.pots[2] = +(adultSession.pots[2] + pot2Add).toFixed(2);
-      adultSession.pots[3] = +(adultSession.pots[3] + pot3Add).toFixed(2);
+      const pot1Add = Math.floor(totalMoney * 0.2);
+      const pot2Add = Math.floor(totalMoney * 0.3);
+      const pot3Add = totalMoney - pot1Add - pot2Add;
+
+      adultSession.pots[1] += pot1Add;
+      adultSession.pots[2] += pot2Add;
+      adultSession.pots[3] += pot3Add;
     }
 
     function prepareAdultRound() {
@@ -1055,20 +1053,31 @@
       markWinnerCards(winners);
 
       let payoutText = "";
+
       if (adultSession.moneyEnabled) {
-        const totalPot = adultSession.pots[level];
-        const share = winners.length ? +(totalPot / winners.length).toFixed(2) : 0;
+        const totalPot = Math.floor(adultSession.pots[level]);
+        const winnerCount = winners.length;
+        const share = winnerCount > 0 ? Math.floor(totalPot / winnerCount) : 0;
+        const remainder = totalPot - (share * winnerCount);
 
         winners.forEach(w => {
           const p = w.playerIndex;
           if (level === 1) adultSession.stats[p].wins1 += 1;
           if (level === 2) adultSession.stats[p].wins2 += 1;
           if (level === 3) adultSession.stats[p].wins3 += 1;
-          adultSession.stats[p].won = +(adultSession.stats[p].won + share).toFixed(2);
+          adultSession.stats[p].won += share;
         });
 
-        adultSession.pots[level] = 0;
-        payoutText = ` Potten delades: ${share.toFixed(2)} kr per vinnande bricka.`;
+        adultSession.pots[level] = remainder;
+
+        if (winnerCount === 1) {
+          payoutText = ` Vinsten blev ${share} kr.`;
+        } else {
+          payoutText = ` Potten delades: ${share} kr per vinnande bricka.`;
+          if (remainder > 0) {
+            payoutText += ` ${remainder} kr ligger kvar i potten.`;
+          }
+        }
       }
 
       adultRoundPaid[level] = true;
