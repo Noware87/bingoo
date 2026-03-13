@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nico & Neo Bingo</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
       display: flex;
@@ -13,11 +17,6 @@
       padding: 20px;
       background: #f0f0f0;
       margin: 0;
-      box-sizing: border-box;
-    }
-
-    * {
-      box-sizing: border-box;
     }
 
     #controls {
@@ -463,12 +462,6 @@
 
     const allNumbers = Array.from({ length: 75 }, (_, i) => i + 1);
 
-    const weights = {
-      1: 0.2,
-      2: 0.3,
-      3: 0.5
-    };
-
     let remaining = [];
     let drawn = [];
     let intervalId = null;
@@ -480,11 +473,11 @@
 
     let adultHiddenRemoved = [];
     let adultRoundEnded = false;
+    let adultRoundPaid = { 1: false, 2: false, 3: false };
 
     const adultSession = {
       round: 1,
       moneyEnabled: false,
-      paid: { 1: false, 2: false, 3: false },
       pots: { 1: 0, 2: 0, 3: 0 },
       stats: Array.from({ length: 10 }, () => ({
         bought: 0,
@@ -531,10 +524,6 @@
 
     function isAdultMode() {
       return gameModeSelect.value === "adult";
-    }
-
-    function isThreeLevelMode() {
-      return gameModeSelect.value === "three-level";
     }
 
     function createAdultPlayerConfig() {
@@ -624,13 +613,7 @@
 
       const rows = [];
       for (let r = 0; r < rowCount; r++) {
-        rows.push([
-          cols.B[r],
-          cols.I[r],
-          cols.N[r],
-          cols.G[r],
-          cols.O[r]
-        ]);
+        rows.push([cols.B[r], cols.I[r], cols.N[r], cols.G[r], cols.O[r]]);
       }
 
       return rows;
@@ -867,9 +850,9 @@
     }
 
     function nextOpenAdultPotLevel() {
-      if (!adultSession.paid[1]) return 1;
-      if (!adultSession.paid[2]) return 2;
-      if (!adultSession.paid[3]) return 3;
+      if (!adultRoundPaid[1]) return 1;
+      if (!adultRoundPaid[2]) return 2;
+      if (!adultRoundPaid[3]) return 3;
       return null;
     }
 
@@ -883,8 +866,8 @@
 
     function updateStatusBar() {
       if (isAdultMode()) {
-        if (gameFinished && adultSession.paid[3]) {
-          statusBarEl.textContent = `Vuxenläge klart – Pot 3 utdelad`;
+        if (gameFinished) {
+          statusBarEl.textContent = "Vuxenläge klart – Pot 3 utdelad";
         } else if (adultRoundEnded) {
           statusBarEl.textContent = `Vuxenläge – runda ${adultSession.round} slut`;
         } else if (waitingForContinue) {
@@ -914,12 +897,6 @@
     function renderAdultPots() {
       adultPotsEl.innerHTML = "";
 
-      const statuses = {
-        1: adultSession.paid[1] ? "Utbetald" : "Öppen",
-        2: adultSession.paid[2] ? "Utbetald" : "Öppen",
-        3: adultSession.paid[3] ? "Utbetald" : "Öppen"
-      };
-
       [1, 2, 3].forEach(level => {
         const box = document.createElement("div");
         box.className = `pot-box pot${level}`;
@@ -928,9 +905,11 @@
           ? `${adultSession.pots[level].toFixed(2)} kr`
           : "Avstängt";
 
+        const roundState = adultRoundPaid[level] ? "Utbetald denna runda" : "Öppen denna runda";
+
         box.innerHTML = `
           Pot ${level}: ${amount}
-          <small>${statuses[level]} – ${level} rad${level > 1 ? "er" : ""}</small>
+          <small>${roundState} – ${level} rad${level > 1 ? "er" : ""}</small>
         `;
         adultPotsEl.appendChild(box);
       });
@@ -970,7 +949,6 @@
     function resetAdultSession() {
       adultSession.round = 1;
       adultSession.moneyEnabled = moneyEnabledInput.checked;
-      adultSession.paid = { 1: false, 2: false, 3: false };
       adultSession.pots = { 1: 0, 2: 0, 3: 0 };
       adultSession.stats = Array.from({ length: 10 }, () => ({
         bought: 0,
@@ -980,8 +958,11 @@
         wins3: 0,
         won: 0
       }));
+
+      adultRoundPaid = { 1: false, 2: false, 3: false };
       adultHiddenRemoved = [];
       adultRoundEnded = false;
+
       renderAdultPots();
       renderAdultStats();
     }
@@ -989,22 +970,13 @@
     function distributeRoundMoney(totalMoney) {
       if (!adultSession.moneyEnabled || totalMoney <= 0) return;
 
-      const openLevels = [1, 2, 3].filter(level => !adultSession.paid[level]);
-      if (!openLevels.length) return;
+      const pot1Add = +(totalMoney * 0.2).toFixed(2);
+      const pot2Add = +(totalMoney * 0.3).toFixed(2);
+      const pot3Add = +(totalMoney - pot1Add - pot2Add).toFixed(2);
 
-      const totalWeight = openLevels.reduce((sum, level) => sum + weights[level], 0);
-
-      let allocated = 0;
-      openLevels.forEach((level, index) => {
-        let addAmount;
-        if (index === openLevels.length - 1) {
-          addAmount = +(totalMoney - allocated).toFixed(2);
-        } else {
-          addAmount = +((totalMoney * weights[level]) / totalWeight).toFixed(2);
-          allocated += addAmount;
-        }
-        adultSession.pots[level] = +(adultSession.pots[level] + addAmount).toFixed(2);
-      });
+      adultSession.pots[1] = +(adultSession.pots[1] + pot1Add).toFixed(2);
+      adultSession.pots[2] = +(adultSession.pots[2] + pot2Add).toFixed(2);
+      adultSession.pots[3] = +(adultSession.pots[3] + pot3Add).toFixed(2);
     }
 
     function prepareAdultRound() {
@@ -1013,6 +985,8 @@
       adultRoundEnded = false;
       gameFinished = false;
       drawn = [];
+      adultRoundPaid = { 1: false, 2: false, 3: false };
+
       currentLetterEl.textContent = "-";
       currentNumberEl.textContent = "";
       winnerTopEl.textContent = "";
@@ -1053,7 +1027,6 @@
 
       const remainingEligible = allNumbers.filter(num => !adultHiddenRemoved.includes(num));
       shuffle(remainingEligible);
-
       remaining = remainingEligible.slice(0, 50);
 
       renderAdultCardsPreview();
@@ -1066,14 +1039,7 @@
 
     function maybeAwardCurrentAdultPot() {
       const level = nextOpenAdultPotLevel();
-      if (!level) {
-        gameFinished = true;
-        actionBtn.style.display = "inline-block";
-        actionBtn.textContent = "Starta nytt spel";
-        actionBtn.dataset.action = "new-game";
-        updateStatusBar();
-        return true;
-      }
+      if (!level) return false;
 
       const winners = getWinnersForLevel(level);
       if (!winners.length) return false;
@@ -1093,28 +1059,20 @@
         const totalPot = adultSession.pots[level];
         const share = winners.length ? +(totalPot / winners.length).toFixed(2) : 0;
 
-        const creditedPlayers = new Map();
-
         winners.forEach(w => {
           const p = w.playerIndex;
-          if (!creditedPlayers.has(p)) {
-            creditedPlayers.set(p, 0);
-          }
-          creditedPlayers.set(p, +(creditedPlayers.get(p) + share).toFixed(2));
-        });
-
-        creditedPlayers.forEach((amount, playerIndex) => {
-          adultSession.stats[playerIndex].won = +(adultSession.stats[playerIndex].won + amount).toFixed(2);
-          if (level === 1) adultSession.stats[playerIndex].wins1 += 1;
-          if (level === 2) adultSession.stats[playerIndex].wins2 += 1;
-          if (level === 3) adultSession.stats[playerIndex].wins3 += 1;
+          if (level === 1) adultSession.stats[p].wins1 += 1;
+          if (level === 2) adultSession.stats[p].wins2 += 1;
+          if (level === 3) adultSession.stats[p].wins3 += 1;
+          adultSession.stats[p].won = +(adultSession.stats[p].won + share).toFixed(2);
         });
 
         adultSession.pots[level] = 0;
         payoutText = ` Potten delades: ${share.toFixed(2)} kr per vinnande bricka.`;
       }
 
-      adultSession.paid[level] = true;
+      adultRoundPaid[level] = true;
+
       renderAdultPots();
       renderAdultStats();
 
@@ -1429,11 +1387,8 @@
     });
 
     startBtn.addEventListener("click", startGame);
-
     resetBtn.addEventListener("click", resetGame);
-
     continueBtn.addEventListener("click", continueAfterWin);
-
     actionBtn.addEventListener("click", actionButtonHandler);
 
     bingoBtn.addEventListener("click", () => {
