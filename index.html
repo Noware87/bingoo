@@ -1070,33 +1070,45 @@
 
       if (adultSession.moneyEnabled) {
         const totalPot = adultSession.pots[level];
-        const winnerCount = winners.length;
+        const winnerBrickCount = winners.length;
 
-        let share = 0;
+        let sharePerBrick = 0;
         let remainder = 0;
 
-        if (winnerCount > 0) {
-          share = Math.floor(totalPot / winnerCount);
-          remainder = totalPot - (share * winnerCount);
+        if (winnerBrickCount > 0) {
+          sharePerBrick = Math.floor(totalPot / winnerBrickCount);
+          remainder = totalPot - (sharePerBrick * winnerBrickCount);
         }
+
+        const payoutByPlayer = {};
 
         winners.forEach(w => {
           const p = w.playerIndex;
 
+          if (!payoutByPlayer[p]) payoutByPlayer[p] = 0;
+          payoutByPlayer[p] += sharePerBrick;
+
           if (level === 1) adultSession.stats[p].wins1 += 1;
           if (level === 2) adultSession.stats[p].wins2 += 1;
           if (level === 3) adultSession.stats[p].wins3 += 1;
+        });
 
-          adultSession.stats[p].won += share;
+        Object.entries(payoutByPlayer).forEach(([playerIndex, amount]) => {
+          adultSession.stats[playerIndex].won += amount;
         });
 
         adultSession.pots[level] = 0;
         moveRemainderToNextPot(level, remainder);
 
-        if (winnerCount === 1) {
+        if (winnerBrickCount === 1) {
           payoutText = ` Vinsten blev ${totalPot} kr.`;
         } else {
-          payoutText = ` Potten delades: ${share} kr per vinnande bricka.`;
+          const payoutLines = Object.entries(payoutByPlayer)
+            .map(([playerIndex, amount]) => ` Spelare ${parseInt(playerIndex, 10) + 1} fick ${amount} kr.`)
+            .join("");
+
+          payoutText = payoutLines;
+
           if (remainder > 0) {
             if (level === 1) {
               payoutText += ` ${remainder} kr flyttades till Pot 2.`;
