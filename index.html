@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nico & Neo Bingo</title>
+
   <style>
     * {
       box-sizing: border-box;
@@ -35,7 +36,8 @@
     }
 
     #settings,
-    #adultSettingsTop {
+    #adultSettingsTop,
+    #paperSettings {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -56,8 +58,7 @@
       border: none;
       border-radius: 6px;
       background: #007bff;
-      color: #fff;
-      transition: background 0.2s;
+      color: white;
     }
 
     button:hover:not(:disabled) {
@@ -74,24 +75,15 @@
       background: #28a745;
     }
 
-    #continueBtn:hover:not(:disabled) {
-      background: #1e7e34;
-    }
-
     #actionBtn {
       display: none;
       background: #ff9800;
-    }
-
-    #actionBtn:hover:not(:disabled) {
-      background: #e68900;
     }
 
     #statusBar {
       font-size: 18px;
       font-weight: bold;
       margin-bottom: 10px;
-      color: #333;
       text-align: center;
     }
 
@@ -137,7 +129,6 @@
       color: #d9534f;
       text-align: center;
       min-height: 32px;
-      max-width: 1100px;
     }
 
     #currentButtons {
@@ -156,7 +147,7 @@
     }
 
     .panel {
-      background: #fff;
+      background: white;
       border: 1px solid #d8d8d8;
       border-radius: 10px;
       padding: 14px;
@@ -197,7 +188,7 @@
     .pot-box {
       border-radius: 10px;
       padding: 12px;
-      color: #fff;
+      color: white;
       font-weight: bold;
     }
 
@@ -209,7 +200,6 @@
       display: block;
       margin-top: 6px;
       font-weight: normal;
-      opacity: 0.95;
     }
 
     #cards {
@@ -238,7 +228,7 @@
     }
 
     .adult-player-column {
-      background: #ffffff;
+      background: white;
       border: 2px solid #ddd;
       border-radius: 12px;
       padding: 10px;
@@ -259,17 +249,17 @@
     }
 
     .bingo-card {
-      background: #fff;
+      background: white;
       border: 2px solid #007bff;
       border-radius: 8px;
       padding: 5px;
-      transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      transition: background 0.25s ease;
     }
 
     .bingo-card.winner-card {
       background: #ff4d4d;
       border-color: #c40000;
-      box-shadow: 0 0 16px rgba(196, 0, 0, 0.35);
+      box-shadow: 0 0 16px rgba(196,0,0,0.35);
     }
 
     .card-title {
@@ -296,8 +286,7 @@
 
     .bingo-card th {
       background: #007bff;
-      color: #fff;
-      font-size: 12px;
+      color: white;
     }
 
     .marked {
@@ -321,7 +310,7 @@
     table.stats-table {
       width: 100%;
       border-collapse: collapse;
-      background: #fff;
+      background: white;
     }
 
     .stats-table th,
@@ -352,30 +341,30 @@
       #winnerTop {
         font-size: 20px;
       }
-
-      .bingo-card th,
-      .bingo-card td {
-        width: 24px;
-        height: 24px;
-        font-size: 11px;
-      }
     }
   </style>
 </head>
+
 <body>
+
   <div id="controls">
+
     <div id="title">Nico & Neo Bingo</div>
 
     <div id="settings">
+
       <label for="gameMode">Läge:</label>
+
       <select id="gameMode">
         <option value="standard">Standard Bingo</option>
         <option value="three-level">Bingo 3 nivåer</option>
         <option value="adult">Bingo 3 nivå VUXEN</option>
+        <option value="paper">Pappersbingo</option>
       </select>
 
       <div id="normalSettings">
         <label for="playerCount">Brickor:</label>
+
         <select id="playerCount">
           <option value="0">0</option>
           <option value="1">1</option>
@@ -393,33 +382,56 @@
 
       <div id="adultSettingsTop" class="hidden">
         <label>
-          <input type="checkbox" id="moneyEnabled" />
+          <input type="checkbox" id="moneyEnabled">
           Spela med pengar
         </label>
       </div>
+
+      <div id="paperSettings" class="hidden">
+
+        <label for="paperSpeed">
+          Tid mellan nummer:
+        </label>
+
+        <select id="paperSpeed">
+          <option value="3000">3 sek</option>
+          <option value="5000" selected>5 sek</option>
+          <option value="7000">7 sek</option>
+          <option value="10000">10 sek</option>
+          <option value="15000">15 sek</option>
+          <option value="20000">20 sek</option>
+          <option value="30000">30 sek</option>
+        </select>
+
+      </div>
+
     </div>
 
     <button id="startBtn">Starta</button>
     <button id="bingoBtn">BINGO</button>
     <button id="toggleSpeakBtn">Tal: Av</button>
     <button id="resetBtn">Återställ</button>
+
   </div>
 
-  <div id="statusBar">Standard Bingo</div>
+  <div id="statusBar"></div>
 
   <div id="currentArea">
+
     <div id="current">
       <div id="current-letter">-</div>
       <div id="current-number"></div>
     </div>
 
     <div id="remainingCount"></div>
+
     <div id="winnerTop"></div>
 
     <div id="currentButtons">
       <button id="continueBtn">Fortsätt</button>
       <button id="actionBtn">Starta nytt spel</button>
     </div>
+
   </div>
 
   <div id="adultConfigWrap" class="hidden">
@@ -447,1031 +459,1795 @@
 
   <div id="history"></div>
 
-  <audio id="bgm" src="audio/background.mp3" loop autoplay></audio>
+  <audio id="bgm" src="audio/background.mp3" loop></audio>
   <audio id="ding" src="audio/ding.mp3"></audio>
   <audio id="bingoSound" src="audio/bingo.mp3"></audio>
 
-  <script>
-    const ranges = {
-      B: [1, 15],
-      I: [16, 30],
-      N: [31, 45],
-      G: [46, 60],
-      O: [61, 75]
-    };
+<script>
 
-    const allNumbers = Array.from({ length: 75 }, (_, i) => i + 1);
+const ranges = {
+  B: [1, 15],
+  I: [16, 30],
+  N: [31, 45],
+  G: [46, 60],
+  O: [61, 75]
+};
 
-    let remaining = [];
-    let drawn = [];
-    let intervalId = null;
-    let speakEnabled = false;
+const allNumbers =
+  Array.from({ length: 75 }, (_, i) => i + 1);
 
-    let currentLevel = 1;
-    let waitingForContinue = false;
-    let gameFinished = false;
+let remaining = [];
+let drawn = [];
 
-    let adultHiddenRemoved = [];
-    let adultRoundEnded = false;
-    let adultRoundPaid = { 1: false, 2: false, 3: false };
-    let adultRoundPrepared = false;
+let intervalId = null;
 
-    const adultSession = {
-      round: 1,
-      moneyEnabled: false,
-      pots: { 1: 0, 2: 0, 3: 0 },
-      stats: Array.from({ length: 10 }, () => ({
-        bought: 0,
-        spent: 0,
-        wins1: 0,
-        wins2: 0,
-        wins3: 0,
-        won: 0
-      }))
-    };
+let speakEnabled = false;
 
-    const gameModeSelect = document.getElementById("gameMode");
-    const playerCountSelect = document.getElementById("playerCount");
-    const moneyEnabledInput = document.getElementById("moneyEnabled");
+let currentLevel = 1;
 
-    const normalSettings = document.getElementById("normalSettings");
-    const adultSettingsTop = document.getElementById("adultSettingsTop");
-    const adultConfigWrap = document.getElementById("adultConfigWrap");
-    const adultPotsWrap = document.getElementById("adultPotsWrap");
-    const adultStatsWrap = document.getElementById("adultStatsWrap");
+let waitingForContinue = false;
 
-    const adultPlayersConfigEl = document.getElementById("adultPlayersConfig");
-    const adultPotsEl = document.getElementById("adultPots");
-    const adultStatsEl = document.getElementById("adultStats");
+let gameFinished = false;
 
-    const startBtn = document.getElementById("startBtn");
-    const bingoBtn = document.getElementById("bingoBtn");
-    const continueBtn = document.getElementById("continueBtn");
-    const actionBtn = document.getElementById("actionBtn");
-    const toggleSpeakBtn = document.getElementById("toggleSpeakBtn");
-    const resetBtn = document.getElementById("resetBtn");
+let adultHiddenRemoved = [];
 
-    const currentLetterEl = document.getElementById("current-letter");
-    const currentNumberEl = document.getElementById("current-number");
-    const remainingCountEl = document.getElementById("remainingCount");
-    const winnerTopEl = document.getElementById("winnerTop");
-    const statusBarEl = document.getElementById("statusBar");
-    const cardsContainer = document.getElementById("cards");
-    const historyEl = document.getElementById("history");
+let adultRoundEnded = false;
 
-    const bgm = document.getElementById("bgm");
-    const ding = document.getElementById("ding");
-    const bingoSound = document.getElementById("bingoSound");
+let adultRoundPaid = {
+  1: false,
+  2: false,
+  3: false
+};
 
-    function isAdultMode() {
-      return gameModeSelect.value === "adult";
+let adultRoundPrepared = false;
+
+const adultSession = {
+
+  round: 1,
+
+  moneyEnabled: false,
+
+  pots: {
+    1: 0,
+    2: 0,
+    3: 0
+  },
+
+  stats:
+    Array.from({ length: 10 }, () => ({
+      bought: 0,
+      spent: 0,
+      wins1: 0,
+      wins2: 0,
+      wins3: 0,
+      won: 0
+    }))
+
+};
+
+
+const gameModeSelect =
+  document.getElementById("gameMode");
+
+const playerCountSelect =
+  document.getElementById("playerCount");
+
+const moneyEnabledInput =
+  document.getElementById("moneyEnabled");
+
+const paperSpeedSelect =
+  document.getElementById("paperSpeed");
+
+const normalSettings =
+  document.getElementById("normalSettings");
+
+const adultSettingsTop =
+  document.getElementById("adultSettingsTop");
+
+const paperSettings =
+  document.getElementById("paperSettings");
+
+const adultConfigWrap =
+  document.getElementById("adultConfigWrap");
+
+const adultPotsWrap =
+  document.getElementById("adultPotsWrap");
+
+const adultStatsWrap =
+  document.getElementById("adultStatsWrap");
+
+const adultPlayersConfigEl =
+  document.getElementById("adultPlayersConfig");
+
+const adultPotsEl =
+  document.getElementById("adultPots");
+
+const adultStatsEl =
+  document.getElementById("adultStats");
+
+const startBtn =
+  document.getElementById("startBtn");
+
+const bingoBtn =
+  document.getElementById("bingoBtn");
+
+const continueBtn =
+  document.getElementById("continueBtn");
+
+const actionBtn =
+  document.getElementById("actionBtn");
+
+const toggleSpeakBtn =
+  document.getElementById("toggleSpeakBtn");
+
+const resetBtn =
+  document.getElementById("resetBtn");
+
+const currentLetterEl =
+  document.getElementById("current-letter");
+
+const currentNumberEl =
+  document.getElementById("current-number");
+
+const remainingCountEl =
+  document.getElementById("remainingCount");
+
+const winnerTopEl =
+  document.getElementById("winnerTop");
+
+const statusBarEl =
+  document.getElementById("statusBar");
+
+const cardsContainer =
+  document.getElementById("cards");
+
+const historyEl =
+  document.getElementById("history");
+
+const bgm =
+  document.getElementById("bgm");
+
+const ding =
+  document.getElementById("ding");
+
+const bingoSound =
+  document.getElementById("bingoSound");
+
+
+function isAdultMode() {
+  return gameModeSelect.value === "adult";
+}
+
+function isPaperMode() {
+  return gameModeSelect.value === "paper";
+}
+
+
+function getLetter(n) {
+
+  if (n <= 15) return "B";
+
+  if (n <= 30) return "I";
+
+  if (n <= 45) return "N";
+
+  if (n <= 60) return "G";
+
+  return "O";
+
+}
+
+
+function shuffle(arr) {
+
+  for (let i = arr.length - 1; i > 0; i--) {
+
+    const j =
+      Math.floor(Math.random() * (i + 1));
+
+    [arr[i], arr[j]] =
+      [arr[j], arr[i]];
+
+  }
+
+}
+
+
+function createAdultPlayerConfig() {
+
+  adultPlayersConfigEl.innerHTML = "";
+
+  for (let i = 1; i <= 10; i++) {
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "adult-player-config";
+
+    const label =
+      document.createElement("label");
+
+    label.textContent =
+      `SPELARE ${i}`;
+
+    const select =
+      document.createElement("select");
+
+    select.dataset.playerIndex =
+      i - 1;
+
+    for (let n = 0; n <= 5; n++) {
+
+      const option =
+        document.createElement("option");
+
+      option.value = n;
+
+      option.textContent =
+        `${n} brickor`;
+
+      if (i <= 2 && n === 1)
+        option.selected = true;
+
+      select.appendChild(option);
+
     }
 
-    function createAdultPlayerConfig() {
-      adultPlayersConfigEl.innerHTML = "";
+    select.addEventListener(
+      "change",
+      renderAdultCardsPreview
+    );
 
-      for (let i = 1; i <= 10; i++) {
-        const row = document.createElement("div");
-        row.className = "adult-player-config";
+    row.appendChild(label);
 
-        const label = document.createElement("label");
-        label.setAttribute("for", `adult-player-${i}`);
-        label.textContent = `SPELARE ${i}`;
+    row.appendChild(select);
 
-        const select = document.createElement("select");
-        select.id = `adult-player-${i}`;
-        select.dataset.playerIndex = i - 1;
+    adultPlayersConfigEl.appendChild(row);
 
-        for (let n = 0; n <= 5; n++) {
-          const opt = document.createElement("option");
-          opt.value = String(n);
-          opt.textContent = `${n} brickor`;
-          if (i <= 2 && n === 1) opt.selected = true;
-          select.appendChild(opt);
-        }
+  }
 
-        select.addEventListener("change", () => {
-          if (isAdultMode() && !isAdultRoundRunning()) {
-            renderAdultCardsPreview();
-          }
-        });
+}
 
-        row.appendChild(label);
-        row.appendChild(select);
-        adultPlayersConfigEl.appendChild(row);
+
+function getAdultSelections() {
+
+  return Array.from(
+    adultPlayersConfigEl
+      .querySelectorAll("select")
+  ).map(
+    s => parseInt(s.value, 10)
+  );
+
+}
+
+
+function buildCardData(rowCount) {
+
+  const cols = {};
+
+  Object.entries(ranges)
+    .forEach(([letter, [start, end]]) => {
+
+      const arr = [];
+
+      for (
+        let n = start;
+        n <= end;
+        n++
+      ) {
+        arr.push(n);
       }
-    }
 
-    function getAdultSelections() {
-      const selects = adultPlayersConfigEl.querySelectorAll("select");
-      return Array.from(selects).map(sel => parseInt(sel.value, 10));
-    }
+      shuffle(arr);
 
-    function isAdultRoundRunning() {
-      return drawn.length > 0 || intervalId || waitingForContinue;
-    }
+      cols[letter] =
+        arr.slice(0, rowCount);
 
-    function resetTopArea() {
-      currentLetterEl.textContent = "-";
-      currentNumberEl.textContent = "";
-      winnerTopEl.textContent = "";
-      historyEl.textContent = "";
-      remainingCountEl.textContent = "";
-      continueBtn.style.display = "none";
-      actionBtn.style.display = "none";
-      actionBtn.textContent = "Starta nytt spel";
-      actionBtn.dataset.action = "";
-    }
+    });
 
-    function getLetter(n) {
-      if (n <= 15) return "B";
-      if (n <= 30) return "I";
-      if (n <= 45) return "N";
-      if (n <= 60) return "G";
-      return "O";
-    }
+  const rows = [];
 
-    function shuffle(arr) {
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-      }
-    }
+  for (
+    let r = 0;
+    r < rowCount;
+    r++
+  ) {
 
-    function buildCardData(rowCount) {
-      const cols = {};
+    rows.push([
+      cols.B[r],
+      cols.I[r],
+      cols.N[r],
+      cols.G[r],
+      cols.O[r]
+    ]);
 
-      Object.entries(ranges).forEach(([letter, [start, end]]) => {
-        const arr = [];
-        for (let n = start; n <= end; n++) arr.push(n);
-        shuffle(arr);
-        cols[letter] = arr.slice(0, rowCount);
+  }
+
+  return rows;
+
+}
+
+
+function createCardElement({
+  title,
+  rows,
+  playerIndex = null,
+  playerCardIndex = null,
+  flatIndex = null
+}) {
+
+  const card =
+    document.createElement("div");
+
+  card.className = "bingo-card";
+
+  if (playerIndex !== null)
+    card.dataset.playerIndex =
+      playerIndex;
+
+  if (playerCardIndex !== null)
+    card.dataset.playerCardIndex =
+      playerCardIndex;
+
+  if (flatIndex !== null)
+    card.dataset.flatIndex =
+      flatIndex;
+
+  const titleEl =
+    document.createElement("div");
+
+  titleEl.className =
+    "card-title";
+
+  titleEl.textContent =
+    title;
+
+  card.appendChild(titleEl);
+
+  const table =
+    document.createElement("table");
+
+  const head =
+    document.createElement("tr");
+
+  ["B","I","N","G","O"]
+    .forEach(letter => {
+
+      const th =
+        document.createElement("th");
+
+      th.textContent = letter;
+
+      head.appendChild(th);
+
+    });
+
+  table.appendChild(head);
+
+  rows.forEach(row => {
+
+    const tr =
+      document.createElement("tr");
+
+    row.forEach(num => {
+
+      const td =
+        document.createElement("td");
+
+      td.textContent = num;
+
+      tr.appendChild(td);
+
+    });
+
+    table.appendChild(tr);
+
+  });
+
+  card.appendChild(table);
+
+  return card;
+
+}
+
+
+function renderNormalCards(count) {
+
+  cardsContainer.innerHTML = "";
+
+  const wrap =
+    document.createElement("div");
+
+  wrap.className =
+    "flat-card-wrap";
+
+  for (
+    let i = 0;
+    i < count;
+    i++
+  ) {
+
+    const card =
+      createCardElement({
+        title: `Bricka ${i + 1}`,
+        rows: buildCardData(15),
+        flatIndex: i
       });
 
-      const rows = [];
-      for (let r = 0; r < rowCount; r++) {
-        rows.push([cols.B[r], cols.I[r], cols.N[r], cols.G[r], cols.O[r]]);
+    wrap.appendChild(card);
+
+  }
+
+  cardsContainer.appendChild(wrap);
+
+}
+
+
+function renderAdultCardsPreview() {
+
+  cardsContainer.innerHTML = "";
+
+  if (!isAdultMode())
+    return;
+
+  const selections =
+    getAdultSelections();
+
+  const board =
+    document.createElement("div");
+
+  board.className =
+    "adult-board";
+
+  selections.forEach(
+    (count, playerIndex) => {
+
+      if (count === 0)
+        return;
+
+      const col =
+        document.createElement("div");
+
+      col.className =
+        "adult-player-column";
+
+      const title =
+        document.createElement("div");
+
+      title.className =
+        "adult-player-title";
+
+      title.textContent =
+        `SPELARE ${playerIndex + 1}`;
+
+      col.appendChild(title);
+
+      const holder =
+        document.createElement("div");
+
+      holder.className =
+        "adult-player-cards";
+
+      for (
+        let i = 0;
+        i < count;
+        i++
+      ) {
+
+        holder.appendChild(
+          createCardElement({
+            title: `Bricka ${i + 1}`,
+            rows: buildCardData(3),
+            playerIndex,
+            playerCardIndex: i
+          })
+        );
+
       }
 
-      return rows;
+      col.appendChild(holder);
+
+      board.appendChild(col);
+
     }
+  );
 
-    function createCardElement({ title, rows, playerIndex = null, playerCardIndex = null, flatIndex = null }) {
-      const card = document.createElement("div");
-      card.className = "bingo-card";
+  cardsContainer.appendChild(board);
 
-      if (playerIndex !== null) {
-        card.dataset.playerIndex = String(playerIndex);
-        card.dataset.playerCardIndex = String(playerCardIndex);
+}
+
+
+function stopGame() {
+
+  if (intervalId) {
+
+    clearInterval(intervalId);
+
+    intervalId = null;
+
+  }
+
+}
+
+
+function clearWinnerCards() {
+
+  document
+    .querySelectorAll(".winner-card")
+    .forEach(c =>
+      c.classList.remove("winner-card")
+    );
+
+}
+
+
+function markCards(num) {
+
+  cardsContainer
+    .querySelectorAll("td")
+    .forEach(td => {
+
+      if (
+        Number(td.textContent) === num
+      ) {
+        td.classList.add("marked");
       }
 
-      if (flatIndex !== null) {
-        card.dataset.flatIndex = String(flatIndex);
-      }
+    });
 
-      const titleEl = document.createElement("div");
-      titleEl.className = "card-title";
-      titleEl.textContent = title;
-      card.appendChild(titleEl);
+}
 
-      const table = document.createElement("table");
 
-      const header = document.createElement("tr");
-      ["B", "I", "N", "G", "O"].forEach(letter => {
-        const th = document.createElement("th");
-        th.textContent = letter;
-        header.appendChild(th);
-      });
-      table.appendChild(header);
+function updateCompletedRowHighlights() {
+
+  cardsContainer
+    .querySelectorAll(".bingo-card")
+    .forEach(card => {
+
+      const rows =
+        Array.from(
+          card.querySelectorAll("tr")
+        ).slice(1);
 
       rows.forEach(row => {
-        const tr = document.createElement("tr");
-        row.forEach(num => {
-          const td = document.createElement("td");
-          td.textContent = num;
-          tr.appendChild(td);
-        });
-        table.appendChild(tr);
+
+        const cells =
+          Array.from(
+            row.querySelectorAll("td")
+          );
+
+        const complete =
+          cells.length &&
+          cells.every(
+            c =>
+              c.classList.contains(
+                "marked"
+              )
+          );
+
+        cells.forEach(
+          c =>
+            c.classList.toggle(
+              "completed",
+              complete
+            )
+        );
+
       });
 
-      card.appendChild(table);
-      return card;
-    }
+    });
 
-    function renderNormalCards(count) {
-      cardsContainer.innerHTML = "";
-      const wrap = document.createElement("div");
-      wrap.className = "flat-card-wrap";
+}
 
-      for (let i = 0; i < count; i++) {
-        const rows = buildCardData(15);
-        const card = createCardElement({
-          title: `Bricka ${i + 1}`,
-          rows,
-          flatIndex: i
+
+function getCompletedRowsForCard(card) {
+
+  const rows =
+    Array.from(
+      card.querySelectorAll("tr")
+    ).slice(1);
+
+  return rows.filter(row => {
+
+    const cells =
+      Array.from(
+        row.querySelectorAll("td")
+      );
+
+    return cells.length &&
+      cells.every(
+        c =>
+          c.classList.contains("marked")
+      );
+
+  }).length;
+
+}
+
+
+function getWinnersForLevel(level) {
+
+  const winners = [];
+
+  cardsContainer
+    .querySelectorAll(".bingo-card")
+    .forEach(card => {
+
+      if (
+        getCompletedRowsForCard(card)
+        >= level
+      ) {
+
+        winners.push({
+
+          cardEl: card,
+
+          playerIndex:
+            card.dataset.playerIndex !== undefined
+              ? Number(card.dataset.playerIndex)
+              : null,
+
+          playerCardIndex:
+            card.dataset.playerCardIndex !== undefined
+              ? Number(card.dataset.playerCardIndex)
+              : null,
+
+          flatIndex:
+            card.dataset.flatIndex !== undefined
+              ? Number(card.dataset.flatIndex)
+              : null
+
         });
-        wrap.appendChild(card);
+
       }
 
-      cardsContainer.appendChild(wrap);
-    }
+    });
 
-    function renderAdultCardsPreview() {
-      cardsContainer.innerHTML = "";
-      const selections = getAdultSelections();
-      const total = selections.reduce((s, v) => s + v, 0);
+  return winners;
 
-      if (total === 0) return;
+}
 
-      const board = document.createElement("div");
-      board.className = "adult-board";
 
-      selections.forEach((count, playerIndex) => {
-        if (count <= 0) return;
+function formatWinnerNames(winners) {
 
-        const col = document.createElement("div");
-        col.className = "adult-player-column";
+  const names =
+    winners.map(w => {
 
-        const title = document.createElement("div");
-        title.className = "adult-player-title";
-        title.textContent = `SPELARE ${playerIndex + 1}`;
-        col.appendChild(title);
-
-        const cardsWrap = document.createElement("div");
-        cardsWrap.className = "adult-player-cards";
-
-        for (let c = 0; c < count; c++) {
-          const rows = buildCardData(3);
-          const card = createCardElement({
-            title: `Bricka ${c + 1}`,
-            rows,
-            playerIndex,
-            playerCardIndex: c
-          });
-          cardsWrap.appendChild(card);
-        }
-
-        col.appendChild(cardsWrap);
-        board.appendChild(col);
-      });
-
-      cardsContainer.appendChild(board);
-    }
-
-    function stopGame() {
-      if (intervalId) {
-        clearInterval(intervalId);
-        intervalId = null;
-      }
-    }
-
-    function clearWinnerCards() {
-      cardsContainer.querySelectorAll(".winner-card").forEach(card => {
-        card.classList.remove("winner-card");
-      });
-    }
-
-    function clearHighlights() {
-      cardsContainer.querySelectorAll(".completed").forEach(cell => {
-        cell.classList.remove("completed");
-      });
-    }
-
-    function updateCompletedRowHighlights() {
-      clearHighlights();
-
-      cardsContainer.querySelectorAll(".bingo-card").forEach(card => {
-        const rows = Array.from(card.querySelectorAll("tr")).slice(1);
-
-        rows.forEach(rowEl => {
-          const cells = Array.from(rowEl.querySelectorAll("td"));
-          const isFullRow = cells.length > 0 && cells.every(td => td.classList.contains("marked"));
-
-          if (isFullRow) {
-            cells.forEach(td => td.classList.add("completed"));
-          }
-        });
-      });
-    }
-
-    function markCards(num) {
-      cardsContainer.querySelectorAll(".bingo-card").forEach(card => {
-        card.querySelectorAll("td").forEach(td => {
-          if (parseInt(td.textContent, 10) === num) {
-            td.classList.add("marked");
-          }
-        });
-      });
-    }
-
-    function getCompletedRowsForCard(cardEl) {
-      const rows = Array.from(cardEl.querySelectorAll("tr")).slice(1);
-      const completedRows = [];
-
-      rows.forEach((rowEl, rowIndex) => {
-        const cells = Array.from(rowEl.querySelectorAll("td"));
-        const isFullRow = cells.length > 0 && cells.every(td => td.classList.contains("marked"));
-        if (isFullRow) {
-          completedRows.push(rowIndex + 1);
-        }
-      });
-
-      return completedRows;
-    }
-
-    function getWinnersForLevel(level) {
-      const winners = [];
-
-      cardsContainer.querySelectorAll(".bingo-card").forEach(card => {
-        const completedRows = getCompletedRowsForCard(card);
-
-        if (completedRows.length >= level) {
-          const playerIndex = card.dataset.playerIndex !== undefined ? parseInt(card.dataset.playerIndex, 10) : null;
-          const playerCardIndex = card.dataset.playerCardIndex !== undefined ? parseInt(card.dataset.playerCardIndex, 10) : null;
-          const flatIndex = card.dataset.flatIndex !== undefined ? parseInt(card.dataset.flatIndex, 10) : null;
-
-          winners.push({
-            cardEl: card,
-            completedRows,
-            playerIndex,
-            playerCardIndex,
-            flatIndex
-          });
-        }
-      });
-
-      return winners;
-    }
-
-    function formatWinnerNames(winners) {
-      const names = winners.map(w => {
-        if (isAdultMode()) {
-          return `Spelare ${w.playerIndex + 1} - Bricka ${w.playerCardIndex + 1}`;
-        }
-        return `Bricka ${w.flatIndex + 1}`;
-      });
-
-      if (names.length === 1) return names[0];
-      if (names.length === 2) return `${names[0]} och ${names[1]}`;
-      return `${names.slice(0, -1).join(", ")} och ${names[names.length - 1]}`;
-    }
-
-    function markWinnerCards(winners) {
-      clearWinnerCards();
-      winners.forEach(w => w.cardEl.classList.add("winner-card"));
-    }
-
-    function playDrawSound(letter, num) {
-      if (!speakEnabled) {
-        ding.currentTime = 0;
-        ding.play().catch(() => {});
-        return;
-      }
-
-      const letterAudio = new Audio(`audio/${letter}.mp3`);
-      letterAudio.onended = () => {
-        const numberAudio = new Audio(`audio/${num}.mp3`);
-        numberAudio.play().catch(() => {});
-      };
-      letterAudio.play().catch(() => {});
-    }
-
-    function updateHistory() {
-      if (!drawn.length) {
-        historyEl.textContent = "";
-        return;
-      }
-
-      const formatted = drawn.map(num => `${getLetter(num)}${num}`);
-      historyEl.textContent = "Dragna nummer: " + formatted.join(" - ");
-    }
-
-    function nextOpenAdultPotLevel() {
-      if (!adultRoundPaid[1]) return 1;
-      if (!adultRoundPaid[2]) return 2;
-      if (!adultRoundPaid[3]) return 3;
-      return null;
-    }
-
-    function updateRemainingCount() {
       if (isAdultMode()) {
-        remainingCountEl.textContent = `Kvar att dra: ${remaining.length}`;
-      } else {
-        remainingCountEl.textContent = "";
-      }
-    }
 
-    function updateStatusBar() {
-      if (isAdultMode()) {
-        if (gameFinished) {
-          statusBarEl.textContent = "Vuxenläge klart – Pot 3 utdelad";
-        } else if (adultRoundEnded) {
-          statusBarEl.textContent = `Vuxenläge – runda ${adultSession.round} slut`;
-        } else if (waitingForContinue) {
-          statusBarEl.textContent = `Vuxenläge – Pot ${nextOpenAdultPotLevel() || 3} väntar på Fortsätt`;
-        } else {
-          statusBarEl.textContent = `Vuxenläge – runda ${adultSession.round}`;
-        }
-        return;
+        return `Spelare ${w.playerIndex + 1} - Bricka ${w.playerCardIndex + 1}`;
+
       }
 
-      if (gameModeSelect.value === "standard") {
-        statusBarEl.textContent = gameFinished ? "Standard Bingo - färdigt" : "Standard Bingo";
-        return;
-      }
+      return `Bricka ${w.flatIndex + 1}`;
 
-      if (gameModeSelect.value === "three-level") {
-        if (gameFinished) {
-          statusBarEl.textContent = "Bingo 3 nivåer - färdigt";
-        } else if (waitingForContinue) {
-          statusBarEl.textContent = `Bingo ${currentLevel} klart - tryck Fortsätt`;
-        } else {
-          statusBarEl.textContent = `Bingo 3 nivåer - spelar om Bingo ${currentLevel}`;
-        }
-      }
+    });
+
+  return names.join(", ");
+
+}
+
+
+function markWinnerCards(winners) {
+
+  clearWinnerCards();
+
+  winners.forEach(
+    w =>
+      w.cardEl.classList.add(
+        "winner-card"
+      )
+  );
+
+}
+
+
+function playDrawSound(letter, num) {
+
+  if (!speakEnabled) {
+
+    ding.currentTime = 0;
+
+    ding.play()
+      .catch(() => {});
+
+    return;
+
+  }
+
+  const letterAudio =
+    new Audio(
+      `audio/${letter}.mp3`
+    );
+
+  letterAudio.onended = () => {
+
+    const numberAudio =
+      new Audio(
+        `audio/${num}.mp3`
+      );
+
+    numberAudio.play()
+      .catch(() => {});
+
+  };
+
+  letterAudio.play()
+    .catch(() => {});
+
+}
+
+
+function updateHistory() {
+
+  if (!drawn.length) {
+
+    historyEl.textContent = "";
+
+    return;
+
+  }
+
+  historyEl.textContent =
+    "Dragna nummer: " +
+    drawn
+      .map(
+        n =>
+          `${getLetter(n)}${n}`
+      )
+      .join(" - ");
+
+}
+
+
+function updateRemainingCount() {
+
+  if (
+    isAdultMode() ||
+    isPaperMode()
+  ) {
+
+    remainingCountEl.textContent =
+      `Kvar att dra: ${remaining.length}`;
+
+  } else {
+
+    remainingCountEl.textContent = "";
+
+  }
+
+}
+
+
+function renderAdultPots() {
+
+  adultPotsEl.innerHTML = "";
+
+  [1,2,3].forEach(level => {
+
+    const div =
+      document.createElement("div");
+
+    div.className =
+      `pot-box pot${level}`;
+
+    div.innerHTML =
+      `Pot ${level}: ${
+        adultSession.moneyEnabled
+        ? adultSession.pots[level] + " kr"
+        : "Avstängt"
+      }`;
+
+    adultPotsEl.appendChild(div);
+
+  });
+
+}
+
+
+function renderAdultStats() {
+
+  const rows =
+    adultSession.stats
+      .map((s, i) => `
+      <tr>
+        <td>Spelare ${i + 1}</td>
+        <td>${s.bought}</td>
+        <td>${s.spent} kr</td>
+        <td>${s.wins1}</td>
+        <td>${s.wins2}</td>
+        <td>${s.wins3}</td>
+        <td>${s.won} kr</td>
+      </tr>
+      `)
+      .join("");
+
+  adultStatsEl.innerHTML = `
+    <table class="stats-table">
+      <tr>
+        <th>Spelare</th>
+        <th>Köpta brickor</th>
+        <th>Satsat</th>
+        <th>Pot 1</th>
+        <th>Pot 2</th>
+        <th>Pot 3</th>
+        <th>Vunnit</th>
+      </tr>
+      ${rows}
+    </table>
+  `;
+
+}
+
+
+function distributeRoundMoney(totalMoney) {
+
+  if (
+    !adultSession.moneyEnabled ||
+    totalMoney <= 0
+  )
+    return;
+
+  const p1 =
+    Math.floor(
+      totalMoney * 20 / 100
+    );
+
+  const p2 =
+    Math.floor(
+      totalMoney * 30 / 100
+    );
+
+  const p3 =
+    totalMoney - p1 - p2;
+
+  adultSession.pots[1] += p1;
+  adultSession.pots[2] += p2;
+  adultSession.pots[3] += p3;
+
+}
+
+
+function prepareAdultRound() {
+
+  drawn = [];
+
+  adultRoundPaid = {
+    1:false,
+    2:false,
+    3:false
+  };
+
+  const selections =
+    getAdultSelections();
+
+  const totalCards =
+    selections.reduce(
+      (a,b) => a+b,
+      0
+    );
+
+  if (!totalCards) {
+
+    winnerTopEl.textContent =
+      "Välj minst en bricka.";
+
+    return false;
+
+  }
+
+  adultSession.moneyEnabled =
+    moneyEnabledInput.checked;
+
+  selections.forEach(
+    (count, index) => {
+
+      adultSession.stats[index].bought += count;
+
+      if (
+        adultSession.moneyEnabled
+      )
+        adultSession.stats[index].spent +=
+          count * 2;
+
+    });
+
+  distributeRoundMoney(
+    totalCards * 2
+  );
+
+  const removed =
+    [...allNumbers];
+
+  shuffle(removed);
+
+  adultHiddenRemoved =
+    removed.slice(0, 15);
+
+  remaining =
+    allNumbers.filter(
+      n =>
+        !adultHiddenRemoved
+          .includes(n)
+    );
+
+  shuffle(remaining);
+
+  renderAdultCardsPreview();
+
+  renderAdultPots();
+
+  renderAdultStats();
+
+  updateRemainingCount();
+
+  adultRoundPrepared = true;
+
+  return true;
+
+}
+
+
+function nextAdultLevel() {
+
+  if (!adultRoundPaid[1])
+    return 1;
+
+  if (!adultRoundPaid[2])
+    return 2;
+
+  if (!adultRoundPaid[3])
+    return 3;
+
+  return null;
+
+}
+
+
+function handleAdultWin(
+  level,
+  winners
+) {
+
+  stopGame();
+
+  waitingForContinue =
+    level < 3;
+
+  adultRoundPaid[level] = true;
+
+  markWinnerCards(winners);
+
+  updateCompletedRowHighlights();
+
+  if (
+    adultSession.moneyEnabled
+  ) {
+
+    const pot =
+      adultSession.pots[level];
+
+    const share =
+      Math.floor(
+        pot / winners.length
+      );
+
+    const remainder =
+      pot -
+      share * winners.length;
+
+    winners.forEach(w => {
+
+      adultSession.stats[
+        w.playerIndex
+      ].won += share;
+
+      if (level === 1)
+        adultSession.stats[
+          w.playerIndex
+        ].wins1++;
+
+      if (level === 2)
+        adultSession.stats[
+          w.playerIndex
+        ].wins2++;
+
+      if (level === 3)
+        adultSession.stats[
+          w.playerIndex
+        ].wins3++;
+
+    });
+
+    adultSession.pots[level] = 0;
+
+    if (level === 1)
+      adultSession.pots[2] += remainder;
+
+    if (level === 2)
+      adultSession.pots[3] += remainder;
+
+    if (level === 3)
+      adultSession.pots[3] += remainder;
+
+  }
+
+  winnerTopEl.textContent =
+    "BINGO! " +
+    formatWinnerNames(winners);
+
+  bingoSound.currentTime = 0;
+
+  bingoSound.play()
+    .catch(() => {});
+
+  renderAdultPots();
+
+  renderAdultStats();
+
+  if (level === 3) {
+
+    gameFinished = true;
+
+    continueBtn.style.display =
+      "none";
+
+    actionBtn.style.display =
+      "inline-block";
+
+    actionBtn.dataset.action =
+      "new-game";
+
+  } else {
+
+    continueBtn.style.display =
+      "inline-block";
+
+  }
+
+}
+
+
+function checkAdultWin() {
+
+  const level =
+    nextAdultLevel();
+
+  if (!level)
+    return false;
+
+  const winners =
+    getWinnersForLevel(level);
+
+  if (
+    winners.length
+  ) {
+
+    handleAdultWin(
+      level,
+      winners
+    );
+
+    return true;
+
+  }
+
+  return false;
+
+}
+
+
+function evaluateNormalWin() {
+
+  const level =
+    gameModeSelect.value ===
+      "standard"
+      ? 1
+      : currentLevel;
+
+  const winners =
+    getWinnersForLevel(level);
+
+  if (!winners.length)
+    return;
+
+  stopGame();
+
+  markWinnerCards(winners);
+
+  updateCompletedRowHighlights();
+
+  winnerTopEl.textContent =
+    "BINGO! " +
+    formatWinnerNames(winners);
+
+  bingoSound.currentTime = 0;
+
+  bingoSound.play()
+    .catch(() => {});
+
+  if (
+    gameModeSelect.value ===
+    "standard"
+  ) {
+
+    gameFinished = true;
+
+    actionBtn.style.display =
+      "inline-block";
+
+  } else {
+
+    if (currentLevel === 3) {
+
+      gameFinished = true;
+
+      actionBtn.style.display =
+        "inline-block";
+
+    } else {
+
+      waitingForContinue = true;
+
+      continueBtn.style.display =
+        "inline-block";
+
     }
 
-    function renderAdultPots() {
-      adultPotsEl.innerHTML = "";
+  }
 
-      [1, 2, 3].forEach(level => {
-        const box = document.createElement("div");
-        box.className = `pot-box pot${level}`;
+}
 
-        const amount = adultSession.moneyEnabled
-          ? `${adultSession.pots[level]} kr`
-          : "Avstängt";
 
-        const roundState = adultRoundPaid[level] ? "Utbetald denna runda" : "Öppen denna runda";
+function drawNumber() {
 
-        box.innerHTML = `
-          Pot ${level}: ${amount}
-          <small>${roundState} – ${level} rad${level > 1 ? "er" : ""}</small>
-        `;
-        adultPotsEl.appendChild(box);
-      });
-    }
+  if (
+    waitingForContinue ||
+    gameFinished
+  )
+    return;
 
-    function renderAdultStats() {
-      const rows = adultSession.stats.map((stat, idx) => `
-        <tr>
-          <td>Spelare ${idx + 1}</td>
-          <td>${stat.bought}</td>
-          <td>${stat.spent} kr</td>
-          <td>${stat.wins1}</td>
-          <td>${stat.wins2}</td>
-          <td>${stat.wins3}</td>
-          <td>${stat.won} kr</td>
-        </tr>
-      `).join("");
+  if (!remaining.length) {
 
-      adultStatsEl.innerHTML = `
-        <table class="stats-table">
-          <thead>
-            <tr>
-              <th>Spelare</th>
-              <th>Köpta brickor</th>
-              <th>Satsat</th>
-              <th>Pot 1 vinster</th>
-              <th>Pot 2 vinster</th>
-              <th>Pot 3 vinster</th>
-              <th>Vunnit</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
-      `;
-    }
+    stopGame();
 
-    function resetAdultSession() {
-      adultSession.round = 1;
-      adultSession.moneyEnabled = moneyEnabledInput.checked;
-      adultSession.pots = { 1: 0, 2: 0, 3: 0 };
-      adultSession.stats = Array.from({ length: 10 }, () => ({
-        bought: 0,
-        spent: 0,
-        wins1: 0,
-        wins2: 0,
-        wins3: 0,
-        won: 0
-      }));
+    if (isAdultMode()) {
 
-      adultRoundPaid = { 1: false, 2: false, 3: false };
-      adultHiddenRemoved = [];
-      adultRoundEnded = false;
-      adultRoundPrepared = false;
-
-      renderAdultPots();
-      renderAdultStats();
-    }
-
-    function moveRemainderToNextPot(level, remainder) {
-      if (remainder <= 0) return;
-
-      if (level === 1) {
-        adultSession.pots[2] += remainder;
-      } else if (level === 2) {
-        adultSession.pots[3] += remainder;
-      } else {
-        adultSession.pots[3] += remainder;
-      }
-    }
-
-    function distributeRoundMoney(totalMoney) {
-      if (!adultSession.moneyEnabled || totalMoney <= 0) return;
-
-      totalMoney = Math.floor(totalMoney);
-
-      const pot1Add = Math.floor(totalMoney * 0.2);
-      const remainingAfterPot1 = totalMoney - pot1Add;
-
-      const pot2Add = Math.floor(remainingAfterPot1 * 0.375);
-      const pot3Add = remainingAfterPot1 - pot2Add;
-
-      adultSession.pots[1] += pot1Add;
-      adultSession.pots[2] += pot2Add;
-      adultSession.pots[3] += pot3Add;
-    }
-
-    function prepareAdultRound() {
-      stopGame();
-      waitingForContinue = false;
-      adultRoundEnded = false;
-      gameFinished = false;
-      drawn = [];
-      adultRoundPaid = { 1: false, 2: false, 3: false };
-
-      currentLetterEl.textContent = "-";
-      currentNumberEl.textContent = "";
-      winnerTopEl.textContent = "";
-      historyEl.textContent = "";
-      continueBtn.style.display = "none";
-      actionBtn.style.display = "none";
-      clearWinnerCards();
-
-      const selections = getAdultSelections();
-      const totalCards = selections.reduce((s, v) => s + v, 0);
-
-      if (totalCards === 0) {
-        cardsContainer.innerHTML = "";
-        remaining = [];
-        updateRemainingCount();
-        winnerTopEl.textContent = "Välj minst en bricka i vuxenläget.";
-        adultRoundPrepared = false;
-        return false;
-      }
-
-      adultSession.moneyEnabled = moneyEnabledInput.checked;
-
-      selections.forEach((count, playerIndex) => {
-        adultSession.stats[playerIndex].bought += count;
-        if (adultSession.moneyEnabled) {
-          adultSession.stats[playerIndex].spent += count * 2;
-        }
-      });
-
-      const roundMoney = adultSession.moneyEnabled ? totalCards * 2 : 0;
-      distributeRoundMoney(roundMoney);
-
-      renderAdultPots();
-      renderAdultStats();
-
-      const removedPool = [...allNumbers];
-      shuffle(removedPool);
-      adultHiddenRemoved = removedPool.slice(0, 15);
-
-      const remainingEligible = allNumbers.filter(num => !adultHiddenRemoved.includes(num));
-      shuffle(remainingEligible);
-      remaining = [...remainingEligible];
-
-      renderAdultCardsPreview();
-      updateRemainingCount();
-      updateHistory();
-      updateCompletedRowHighlights();
-      updateStatusBar();
-
-      adultRoundPrepared = true;
-      return true;
-    }
-
-    function maybeAwardCurrentAdultPot() {
-      const level = nextOpenAdultPotLevel();
-      if (!level) return false;
-
-      const winners = getWinnersForLevel(level);
-      if (!winners.length) return false;
-
-      handleAdultPotWin(level, winners);
-      return true;
-    }
-
-    function handleAdultPotWin(level, winners) {
-      stopGame();
-      waitingForContinue = level < 3;
-      updateCompletedRowHighlights();
-      markWinnerCards(winners);
-
-      let payoutText = "";
-
-      if (adultSession.moneyEnabled) {
-        const totalPot = adultSession.pots[level];
-        const winnerBrickCount = winners.length;
-
-        let sharePerBrick = 0;
-        let remainder = 0;
-
-        if (winnerBrickCount > 0) {
-          sharePerBrick = Math.floor(totalPot / winnerBrickCount);
-          remainder = totalPot - (sharePerBrick * winnerBrickCount);
-        }
-
-        const payoutByPlayer = {};
-
-        winners.forEach(w => {
-          const p = w.playerIndex;
-
-          if (!payoutByPlayer[p]) payoutByPlayer[p] = 0;
-          payoutByPlayer[p] += sharePerBrick;
-
-          if (level === 1) adultSession.stats[p].wins1 += 1;
-          if (level === 2) adultSession.stats[p].wins2 += 1;
-          if (level === 3) adultSession.stats[p].wins3 += 1;
-        });
-
-        Object.entries(payoutByPlayer).forEach(([playerIndex, amount]) => {
-          adultSession.stats[playerIndex].won += amount;
-        });
-
-        adultSession.pots[level] = 0;
-        moveRemainderToNextPot(level, remainder);
-
-        if (winnerBrickCount === 1) {
-          payoutText = ` Vinsten blev ${totalPot} kr.`;
-        } else {
-          const payoutLines = Object.entries(payoutByPlayer)
-            .map(([playerIndex, amount]) => ` Spelare ${parseInt(playerIndex, 10) + 1} fick ${amount} kr.`)
-            .join("");
-
-          payoutText = payoutLines;
-
-          if (remainder > 0) {
-            if (level === 1) {
-              payoutText += ` ${remainder} kr flyttades till Pot 2.`;
-            } else if (level === 2) {
-              payoutText += ` ${remainder} kr flyttades till Pot 3.`;
-            } else {
-              payoutText += ` ${remainder} kr ligger kvar i Pot 3.`;
-            }
-          }
-        }
-      }
-
-      adultRoundPaid[level] = true;
-
-      renderAdultPots();
-      renderAdultStats();
-
-      bingoSound.currentTime = 0;
-      bingoSound.play().catch(() => {});
-
-      const winnerText = formatWinnerNames(winners);
-      winnerTopEl.textContent =
-        winners.length === 1
-          ? `BINGO! ${winnerText} fick bingo.${payoutText}`
-          : `BINGO! Delad vinst: ${winnerText}.${payoutText}`;
-
-      if (level === 3) {
-        gameFinished = true;
-        waitingForContinue = false;
-        continueBtn.style.display = "none";
-        actionBtn.style.display = "inline-block";
-        actionBtn.textContent = "Starta nytt spel";
-        actionBtn.dataset.action = "new-game";
-      } else {
-        continueBtn.style.display = "inline-block";
-        actionBtn.style.display = "none";
-      }
-
-      updateStatusBar();
-    }
-
-    function finishAdultRoundWithoutPot3() {
-      stopGame();
-      waitingForContinue = false;
       adultRoundEnded = true;
-      gameFinished = false;
+
       adultRoundPrepared = false;
-      winnerTopEl.textContent = "Rundan är slut. Ingen BINGO 3 innan 60 drag. Starta nästa runda för att fylla på potterna.";
-      continueBtn.style.display = "none";
-      actionBtn.style.display = "inline-block";
-      actionBtn.textContent = "Nästa runda";
-      actionBtn.dataset.action = "next-round";
-      updateStatusBar();
-      updateRemainingCount();
-    }
 
-    function startNextAdultRound() {
-      adultSession.round += 1;
-      stopGame();
-      drawn = [];
-      remaining = [];
-      waitingForContinue = false;
-      adultRoundEnded = false;
-      gameFinished = false;
-      adultRoundPaid = { 1: false, 2: false, 3: false };
-      adultRoundPrepared = false;
-      resetTopArea();
-      clearWinnerCards();
-      updateStatusBar();
-      updateRemainingCount();
-    }
-
-    function evaluateNormalWinState() {
-      if (parseInt(playerCountSelect.value, 10) === 0) return { hit: false };
-
-      if (gameModeSelect.value === "standard") {
-        const winners = getWinnersForLevel(1);
-        if (winners.length) {
-          return { hit: true, winners, final: true, level: 1 };
-        }
-        return { hit: false };
-      }
-
-      const winners = getWinnersForLevel(currentLevel);
-      if (winners.length) {
-        return { hit: true, winners, final: currentLevel >= 3, level: currentLevel };
-      }
-
-      return { hit: false };
-    }
-
-    function handleNormalWinResult(result) {
-      stopGame();
-      updateCompletedRowHighlights();
-      markWinnerCards(result.winners);
-
-      bingoSound.currentTime = 0;
-      bingoSound.play().catch(() => {});
-
-      const winnerText = formatWinnerNames(result.winners);
       winnerTopEl.textContent =
-        result.winners.length === 1
-          ? `BINGO! ${winnerText} fick bingo.`
-          : `BINGO! Delad vinst: ${winnerText}.`;
+        "Rundan är slut.";
 
-      if (gameModeSelect.value === "standard") {
-        gameFinished = true;
-        continueBtn.style.display = "none";
-        actionBtn.style.display = "inline-block";
-        actionBtn.textContent = "Starta nytt spel";
-        actionBtn.dataset.action = "new-game";
-      } else {
-        if (result.final) {
-          gameFinished = true;
-          waitingForContinue = false;
-          continueBtn.style.display = "none";
-          actionBtn.style.display = "inline-block";
-          actionBtn.textContent = "Starta nytt spel";
-          actionBtn.dataset.action = "new-game";
-        } else {
-          waitingForContinue = true;
-          continueBtn.style.display = "inline-block";
-          actionBtn.style.display = "none";
-        }
-      }
+      actionBtn.style.display =
+        "inline-block";
 
-      updateStatusBar();
+      actionBtn.textContent =
+        "Nästa runda";
+
+      actionBtn.dataset.action =
+        "next-round";
+
+    } else {
+
+      gameFinished = true;
+
+      winnerTopEl.textContent =
+        "Alla nummer är dragna.";
+
+      actionBtn.style.display =
+        "inline-block";
+
     }
 
-    function drawNumber() {
-      if (waitingForContinue || gameFinished) {
-        stopGame();
-        return;
-      }
+    return;
 
-      if (!remaining.length) {
-        stopGame();
+  }
 
-        if (isAdultMode()) {
-          finishAdultRoundWithoutPot3();
-        } else {
-          gameFinished = true;
-          winnerTopEl.textContent = "Alla nummer är dragna.";
-          actionBtn.style.display = "inline-block";
-          actionBtn.textContent = "Starta nytt spel";
-          actionBtn.dataset.action = "new-game";
-          updateStatusBar();
-        }
+  const num =
+    remaining.shift();
 
-        return;
-      }
+  drawn.push(num);
 
-      const idx = Math.floor(Math.random() * remaining.length);
-      const num = remaining.splice(idx, 1)[0];
-      drawn.push(num);
+  const letter =
+    getLetter(num);
 
-      updateRemainingCount();
+  currentLetterEl.textContent =
+    letter;
 
-      const letter = getLetter(num);
-      currentLetterEl.textContent = letter;
-      currentNumberEl.textContent = num;
-      updateHistory();
+  currentNumberEl.textContent =
+    num;
 
-      if (cardsContainer.querySelectorAll(".bingo-card").length > 0) {
-        markCards(num);
-        updateCompletedRowHighlights();
-      }
+  updateHistory();
 
-      if (isAdultMode()) {
-        if (maybeAwardCurrentAdultPot()) return;
-      } else {
-        const result = evaluateNormalWinState();
-        if (result.hit) {
-          handleNormalWinResult(result);
-          return;
-        }
-      }
+  updateRemainingCount();
 
-      playDrawSound(letter, num);
-      bgm.play().catch(() => {});
-    }
+  if (!isPaperMode()) {
 
-    function startNormalGame() {
-      if (intervalId || waitingForContinue || gameFinished) return;
+    markCards(num);
 
-      if (!drawn.length) {
-        remaining = [...allNumbers];
-        shuffle(remaining);
-        resetTopArea();
-        clearWinnerCards();
-        cardsContainer.querySelectorAll(".marked").forEach(td => td.classList.remove("marked"));
-        updateCompletedRowHighlights();
-      }
+    updateCompletedRowHighlights();
 
-      drawNumber();
+  }
 
-      if (!waitingForContinue && !gameFinished && remaining.length > 0) {
-        intervalId = setInterval(drawNumber, 5000);
-      }
-    }
+  playDrawSound(
+    letter,
+    num
+  );
 
-    function startAdultGame() {
-      if (intervalId || waitingForContinue || gameFinished || adultRoundEnded) return;
+  if (isAdultMode()) {
 
-      if (!adultRoundPrepared) {
-        const ok = prepareAdultRound();
-        if (!ok) return;
-      }
+    checkAdultWin();
 
-      if (maybeAwardCurrentAdultPot()) return;
+  } else if (
+    !isPaperMode()
+  ) {
 
-      drawNumber();
+    evaluateNormalWin();
 
-      if (!waitingForContinue && !gameFinished && !adultRoundEnded && remaining.length > 0) {
-        intervalId = setInterval(drawNumber, 5000);
-      }
-    }
+  }
 
-    function startGame() {
-      if (isAdultMode()) {
-        startAdultGame();
-      } else {
-        startNormalGame();
-      }
-    }
+}
 
-    function continueAfterWin() {
-      if (!waitingForContinue) return;
 
-      waitingForContinue = false;
-      continueBtn.style.display = "none";
-      winnerTopEl.textContent = "";
-      clearWinnerCards();
+function startPaperGame() {
 
-      if (isAdultMode()) {
-        if (maybeAwardCurrentAdultPot()) return;
+  if (
+    intervalId ||
+    waitingForContinue ||
+    gameFinished
+  )
+    return;
 
-        if (!remaining.length) {
-          finishAdultRoundWithoutPot3();
-          return;
-        }
+  if (!drawn.length) {
 
-        intervalId = setInterval(drawNumber, 5000);
-        updateStatusBar();
-        return;
-      }
+    remaining =
+      [...allNumbers];
 
-      currentLevel += 1;
-      updateStatusBar();
+    shuffle(remaining);
 
-      const result = evaluateNormalWinState();
-      if (result.hit) {
-        handleNormalWinResult(result);
-        return;
-      }
+    cardsContainer.innerHTML = "";
 
-      if (!remaining.length) {
-        gameFinished = true;
-        winnerTopEl.textContent = "Inga fler nummer kvar att dra.";
-        actionBtn.style.display = "inline-block";
-        actionBtn.textContent = "Starta nytt spel";
-        actionBtn.dataset.action = "new-game";
-        updateStatusBar();
-        return;
-      }
+    winnerTopEl.textContent = "";
 
-      intervalId = setInterval(drawNumber, 5000);
-    }
+    actionBtn.style.display =
+      "none";
 
-    function refreshModeUI() {
-      const adult = isAdultMode();
+    updateRemainingCount();
 
-      normalSettings.classList.toggle("hidden", adult);
-      adultSettingsTop.classList.toggle("hidden", !adult);
-      adultConfigWrap.classList.toggle("hidden", !adult);
-      adultPotsWrap.classList.toggle("hidden", !adult);
-      adultStatsWrap.classList.toggle("hidden", !adult);
+  }
 
-      updateStatusBar();
-    }
+  drawNumber();
 
-    function resetGame() {
-      stopGame();
-      drawn = [];
-      remaining = [];
-      waitingForContinue = false;
-      gameFinished = false;
-      currentLevel = 1;
-      adultRoundEnded = false;
-      adultRoundPrepared = false;
+  if (
+    !gameFinished &&
+    !waitingForContinue
+  ) {
 
-      resetTopArea();
-      cardsContainer.innerHTML = "";
+    intervalId =
+      setInterval(
+        drawNumber,
+        Number(
+          paperSpeedSelect.value
+        )
+      );
 
-      if (isAdultMode()) {
-        resetAdultSession();
-        renderAdultCardsPreview();
-      } else {
-        const count = parseInt(playerCountSelect.value, 10);
-        renderNormalCards(count);
-      }
+  }
 
-      updateCompletedRowHighlights();
-      updateStatusBar();
-      updateRemainingCount();
-    }
+}
 
-    function actionButtonHandler() {
-      const action = actionBtn.dataset.action;
 
-      if (action === "next-round") {
-        startNextAdultRound();
-        return;
-      }
+function startAdultGame() {
 
-      resetGame();
-    }
+  if (
+    intervalId ||
+    waitingForContinue ||
+    gameFinished ||
+    adultRoundEnded
+  )
+    return;
 
-    gameModeSelect.addEventListener("change", () => {
-      refreshModeUI();
-      resetGame();
-    });
+  if (!adultRoundPrepared) {
 
-    playerCountSelect.addEventListener("change", () => {
-      if (!isAdultMode()) resetGame();
-    });
+    if (!prepareAdultRound())
+      return;
 
-    moneyEnabledInput.addEventListener("change", () => {
-      if (isAdultMode() && !isAdultRoundRunning() && !adultRoundPrepared) {
-        adultSession.moneyEnabled = moneyEnabledInput.checked;
-        renderAdultPots();
-      }
-    });
+  }
 
-    toggleSpeakBtn.addEventListener("click", () => {
-      speakEnabled = !speakEnabled;
-      toggleSpeakBtn.textContent = `Tal: ${speakEnabled ? "På" : "Av"}`;
-    });
+  drawNumber();
 
-    startBtn.addEventListener("click", startGame);
-    resetBtn.addEventListener("click", resetGame);
-    continueBtn.addEventListener("click", continueAfterWin);
-    actionBtn.addEventListener("click", actionButtonHandler);
+  if (
+    !waitingForContinue &&
+    !gameFinished
+  ) {
 
-    bingoBtn.addEventListener("click", () => {
-      stopGame();
+    intervalId =
+      setInterval(
+        drawNumber,
+        5000
+      );
+
+  }
+
+}
+
+
+function startNormalGame() {
+
+  if (
+    intervalId ||
+    waitingForContinue ||
+    gameFinished
+  )
+    return;
+
+  if (!drawn.length) {
+
+    remaining =
+      [...allNumbers];
+
+    shuffle(remaining);
+
+  }
+
+  drawNumber();
+
+  if (
+    !waitingForContinue &&
+    !gameFinished
+  ) {
+
+    intervalId =
+      setInterval(
+        drawNumber,
+        5000
+      );
+
+  }
+
+}
+
+
+function startGame() {
+
+  if (isPaperMode()) {
+
+    startPaperGame();
+
+  } else if (isAdultMode()) {
+
+    startAdultGame();
+
+  } else {
+
+    startNormalGame();
+
+  }
+
+}
+
+
+function continueAfterWin() {
+
+  waitingForContinue = false;
+
+  clearWinnerCards();
+
+  winnerTopEl.textContent = "";
+
+  continueBtn.style.display =
+    "none";
+
+  if (isPaperMode()) {
+
+    intervalId =
+      setInterval(
+        drawNumber,
+        Number(
+          paperSpeedSelect.value
+        )
+      );
+
+    return;
+
+  }
+
+  if (isAdultMode()) {
+
+    intervalId =
+      setInterval(
+        drawNumber,
+        5000
+      );
+
+    return;
+
+  }
+
+  currentLevel++;
+
+  intervalId =
+    setInterval(
+      drawNumber,
+      5000
+    );
+
+}
+
+
+function paperBingoPause() {
+
+  if (!isPaperMode())
+    return;
+
+  if (!drawn.length)
+    return;
+
+  stopGame();
+
+  waitingForContinue = true;
+
+  winnerTopEl.textContent =
+    "BINGO! Kontrollera brickan.";
+
+  continueBtn.style.display =
+    "inline-block";
+
+  bingoSound.currentTime = 0;
+
+  bingoSound.play()
+    .catch(() => {});
+
+}
+
+
+function resetAdultSession() {
+
+  adultSession.round = 1;
+
+  adultSession.pots = {
+    1:0,
+    2:0,
+    3:0
+  };
+
+  adultSession.stats =
+    Array.from(
+      { length:10 },
+      () => ({
+        bought:0,
+        spent:0,
+        wins1:0,
+        wins2:0,
+        wins3:0,
+        won:0
+      })
+    );
+
+  adultRoundPrepared = false;
+
+  adultRoundEnded = false;
+
+  renderAdultPots();
+
+  renderAdultStats();
+
+}
+
+
+function resetGame() {
+
+  stopGame();
+
+  remaining = [];
+
+  drawn = [];
+
+  currentLevel = 1;
+
+  waitingForContinue = false;
+
+  gameFinished = false;
+
+  adultRoundEnded = false;
+
+  adultRoundPrepared = false;
+
+  currentLetterEl.textContent =
+    "-";
+
+  currentNumberEl.textContent =
+    "";
+
+  winnerTopEl.textContent =
+    "";
+
+  remainingCountEl.textContent =
+    "";
+
+  historyEl.textContent =
+    "";
+
+  continueBtn.style.display =
+    "none";
+
+  actionBtn.style.display =
+    "none";
+
+  clearWinnerCards();
+
+  if (isPaperMode()) {
+
+    cardsContainer.innerHTML = "";
+
+  } else if (isAdultMode()) {
+
+    resetAdultSession();
+
+    renderAdultCardsPreview();
+
+  } else {
+
+    renderNormalCards(
+      Number(
+        playerCountSelect.value
+      )
+    );
+
+  }
+
+  updateRemainingCount();
+
+  updateStatus();
+
+}
+
+
+function updateStatus() {
+
+  if (isPaperMode()) {
+
+    statusBarEl.textContent =
+      "Pappersbingo";
+
+  } else if (isAdultMode()) {
+
+    statusBarEl.textContent =
+      `Bingo 3 nivå VUXEN – Runda ${adultSession.round}`;
+
+  } else if (
+    gameModeSelect.value ===
+    "three-level"
+  ) {
+
+    statusBarEl.textContent =
+      `Bingo 3 nivåer – Bingo ${currentLevel}`;
+
+  } else {
+
+    statusBarEl.textContent =
+      "Standard Bingo";
+
+  }
+
+}
+
+
+function refreshModeUI() {
+
+  const adult =
+    isAdultMode();
+
+  const paper =
+    isPaperMode();
+
+  normalSettings.classList.toggle(
+    "hidden",
+    adult || paper
+  );
+
+  adultSettingsTop.classList.toggle(
+    "hidden",
+    !adult
+  );
+
+  adultConfigWrap.classList.toggle(
+    "hidden",
+    !adult
+  );
+
+  adultPotsWrap.classList.toggle(
+    "hidden",
+    !adult
+  );
+
+  adultStatsWrap.classList.toggle(
+    "hidden",
+    !adult
+  );
+
+  paperSettings.classList.toggle(
+    "hidden",
+    !paper
+  );
+
+  updateStatus();
+
+}
+
+
+function nextAdultRound() {
+
+  adultSession.round++;
+
+  drawn = [];
+
+  remaining = [];
+
+  adultRoundEnded = false;
+
+  adultRoundPrepared = false;
+
+  waitingForContinue = false;
+
+  gameFinished = false;
+
+  winnerTopEl.textContent = "";
+
+  actionBtn.style.display =
+    "none";
+
+  currentLetterEl.textContent =
+    "-";
+
+  currentNumberEl.textContent =
+    "";
+
+  historyEl.textContent =
+    "";
+
+  updateStatus();
+
+}
+
+
+gameModeSelect.addEventListener(
+  "change",
+  () => {
+
+    refreshModeUI();
+
+    resetGame();
+
+  }
+);
+
+
+playerCountSelect.addEventListener(
+  "change",
+  resetGame
+);
+
+
+startBtn.addEventListener(
+  "click",
+  startGame
+);
+
+
+continueBtn.addEventListener(
+  "click",
+  continueAfterWin
+);
+
+
+bingoBtn.addEventListener(
+  "click",
+  () => {
+
+    if (isPaperMode()) {
+
+      paperBingoPause();
+
+    } else {
+
       bingoSound.currentTime = 0;
-      bingoSound.play().catch(() => {});
-      winnerTopEl.textContent = "BINGO!";
-    });
 
-    window.addEventListener("load", () => {
-      bgm.volume = 0.3;
-      bgm.play().catch(() => {});
-      createAdultPlayerConfig();
-      refreshModeUI();
+      bingoSound.play()
+        .catch(() => {});
+
+    }
+
+  }
+);
+
+
+toggleSpeakBtn.addEventListener(
+  "click",
+  () => {
+
+    speakEnabled =
+      !speakEnabled;
+
+    toggleSpeakBtn.textContent =
+      `Tal: ${
+        speakEnabled
+          ? "På"
+          : "Av"
+      }`;
+
+  }
+);
+
+
+resetBtn.addEventListener(
+  "click",
+  resetGame
+);
+
+
+actionBtn.addEventListener(
+  "click",
+  () => {
+
+    if (
+      actionBtn.dataset.action ===
+      "next-round"
+    ) {
+
+      nextAdultRound();
+
+    } else {
+
       resetGame();
-    });
-  </script>
+
+    }
+
+  }
+);
+
+
+paperSpeedSelect.addEventListener(
+  "change",
+  () => {
+
+    if (
+      isPaperMode() &&
+      intervalId
+    ) {
+
+      stopGame();
+
+      intervalId =
+        setInterval(
+          drawNumber,
+          Number(
+            paperSpeedSelect.value
+          )
+        );
+
+    }
+
+  }
+);
+
+
+window.addEventListener(
+  "load",
+  () => {
+
+    createAdultPlayerConfig();
+
+    refreshModeUI();
+
+    resetGame();
+
+  }
+);
+
+</script>
+
 </body>
 </html>
