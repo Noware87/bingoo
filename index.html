@@ -6,192 +6,248 @@
 <title>Nico & Neo Bingo</title>
 
 <style>
+:root {
+  --blue: #2563eb;
+  --blue-dark: #1d4ed8;
+  --border: #dbe3ef;
+  --background: #f2f5fa;
+  --text: #17243b;
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--background);
+  color: var(--text);
+  margin: 0;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  background: #f0f0f0;
-  margin: 0;
 }
 
-#controls {
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  flex-wrap: wrap;
+h1 {
+  margin: 8px 0 22px;
+  text-align: center;
+  font-size: clamp(32px, 5vw, 58px);
+  font-weight: 900;
+  letter-spacing: -1.5px;
+  line-height: 1.15;
+  background: linear-gradient(110deg, #1756c8, #7c3aed, #2563eb);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 3px 2px rgba(30, 64, 175, 0.16));
+}
+
+.settings-panel,
+.music-panel {
   width: 100%;
+  max-width: 1250px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 14px;
+  margin-bottom: 13px;
 }
 
-#title {
-  font-size: 22px;
-  font-weight: bold;
-}
-
-#settings,
-#adultSettingsTop,
-#paperSettings,
-#musicSettings {
+.settings-row,
+.music-row,
+.action-row {
   display: flex;
-  align-items: center;
-  gap: 8px;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
+  gap: 10px;
 }
 
-label, select, input, button {
+.action-row {
+  width: 100%;
+  max-width: 1250px;
+  margin-bottom: 15px;
+}
+
+label,
+select,
+input,
+button {
   font-size: 16px;
 }
 
-button, .print-button {
-  padding: 9px 13px;
-  cursor: pointer;
-  border: none;
-  border-radius: 6px;
-  background: #007bff;
+select {
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  background: white;
+  color: var(--text);
+  padding: 9px 11px;
+  min-height: 43px;
+}
+
+button,
+.action-link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  min-height: 44px;
+  padding: 10px 15px;
+  border: 1px solid var(--blue);
+  border-radius: 8px;
+  background: var(--blue);
   color: white;
+  font-weight: 700;
   text-decoration: none;
-  display: inline-block;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
 }
 
 button:hover:not(:disabled),
-.print-button:hover {
-  background: #0056b3;
+.action-link:hover {
+  background: var(--blue-dark);
+  transform: translateY(-1px);
 }
 
 button:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
 }
 
-#resetBtn {
-  background: #dc3545;
+button:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 2px;
 }
 
-#printBtn {
-  background: #198754;
+.music-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-#bingoBtn {
-  background: #ff9800;
+.music-row {
+  gap: 12px;
 }
 
-#continueBtn {
-  display: none;
-  background: #28a745;
-}
-
-#actionBtn {
-  display: none;
-  background: #ff9800;
-}
-
-#musicPanel {
+.music-buttons {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
-  align-items: center;
-  background: white;
-  padding: 12px;
-  border-radius: 10px;
-  margin-bottom: 15px;
-  width: 100%;
-  max-width: 1200px;
+  gap: 7px;
+}
+
+.music-buttons button {
+  min-width: 47px;
+  font-size: 21px;
+  padding: 7px 11px;
+}
+
+.music-buttons button.active {
+  background: #143b89;
+  border-color: #143b89;
+  box-shadow: inset 0 0 0 2px #93c5fd;
 }
 
 #musicVolume {
-  width: 120px;
+  width: 145px;
+  accent-color: var(--blue);
+}
+
+#musicStatus {
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+  min-height: 17px;
 }
 
 #statusBar {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 10px;
+  font-size: 19px;
+  font-weight: 800;
   text-align: center;
+  margin: 9px 0;
 }
 
 #currentArea {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  margin-bottom: 16px;
-  width: 100%;
+  margin: 10px 0 18px;
 }
 
 #current {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-height: 90px;
+  justify-content: center;
+  gap: 13px;
+  min-height: 100px;
 }
 
 #current-letter {
-  font-size: 80px;
-  font-weight: bold;
-  color: red;
+  font-size: 86px;
+  font-weight: 900;
+  color: #dc2626;
   line-height: 1;
 }
 
 #current-number {
-  font-size: 50px;
-  font-weight: bold;
+  font-size: 62px;
+  font-weight: 900;
   line-height: 1;
 }
 
 #remainingCount {
   font-size: 18px;
   font-weight: bold;
-  color: #333;
-  min-height: 24px;
+  min-height: 22px;
 }
 
 #winnerTop {
   font-size: 24px;
-  font-weight: bold;
-  color: #d9534f;
+  font-weight: 800;
+  color: #dc2626;
   text-align: center;
-  min-height: 32px;
+  max-width: 1100px;
+  min-height: 30px;
 }
 
 #currentButtons {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
   justify-content: center;
+  gap: 10px;
+}
+
+#continueBtn,
+#actionBtn {
+  display: none;
+}
+
+.panel {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.panel h3 {
+  margin: 0 0 12px;
 }
 
 #adultConfigWrap,
 #adultPotsWrap,
 #adultStatsWrap {
   width: 100%;
-  max-width: 1200px;
-  margin-bottom: 16px;
-}
-
-.panel {
-  background: white;
-  border: 1px solid #d8d8d8;
-  border-radius: 10px;
-  padding: 14px;
-}
-
-.panel h3 {
-  margin: 0 0 12px 0;
-  font-size: 18px;
+  max-width: 1250px;
+  margin-bottom: 15px;
 }
 
 #adultPlayersConfig {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
   gap: 10px;
 }
 
@@ -200,9 +256,9 @@ button:disabled {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  background: #f8f8f8;
+  padding: 8px;
   border-radius: 8px;
-  padding: 8px 10px;
+  background: #f1f5f9;
 }
 
 .adult-player-config label {
@@ -211,63 +267,63 @@ button:disabled {
 
 #adultPots {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   gap: 10px;
 }
 
 .pot-box {
-  border-radius: 10px;
-  padding: 12px;
+  border-radius: 9px;
+  padding: 13px;
   color: white;
   font-weight: bold;
 }
 
-.pot1 { background: #5bc0de; }
-.pot2 { background: #5cb85c; }
-.pot3 { background: #d9534f; }
+.pot1 { background: #0891b2; }
+.pot2 { background: #16a34a; }
+.pot3 { background: #dc2626; }
 
 .pot-box small {
   display: block;
-  margin-top: 6px;
+  margin-top: 7px;
   font-weight: normal;
 }
 
 #cards {
   width: 100%;
-  max-width: 1300px;
+  max-width: 1350px;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
-  margin-bottom: 16px;
+  margin-bottom: 15px;
 }
 
 .flat-card-wrap {
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
-  width: 100%;
 }
 
 .adult-board {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 14px;
   width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+  gap: 12px;
 }
 
 .adult-player-column {
   background: white;
-  border: 2px solid #ddd;
-  border-radius: 12px;
+  border: 2px solid var(--border);
+  border-radius: 11px;
   padding: 10px;
 }
 
 .adult-player-title {
-  text-align: center;
-  font-weight: bold;
   font-size: 18px;
+  font-weight: bold;
+  text-align: center;
   margin-bottom: 10px;
 }
 
@@ -275,27 +331,27 @@ button:disabled {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
+  gap: 9px;
 }
 
 .bingo-card {
   background: white;
-  border: 2px solid #007bff;
+  border: 2px solid var(--blue);
   border-radius: 8px;
   padding: 5px;
 }
 
 .bingo-card.winner-card {
   background: #ff4d4d;
-  border-color: #c40000;
-  box-shadow: 0 0 16px rgba(196,0,0,0.35);
+  border-color: #b91c1c;
+  box-shadow: 0 0 15px rgba(185, 28, 28, 0.35);
 }
 
 .card-title {
-  font-size: 14px;
-  font-weight: bold;
-  margin-bottom: 5px;
   text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 5px;
 }
 
 .bingo-card table {
@@ -304,39 +360,43 @@ button:disabled {
 
 .bingo-card th,
 .bingo-card td {
-  border: 1px solid #ccc;
+  border: 1px solid #cbd5e1;
   width: 28px;
   height: 28px;
   text-align: center;
   vertical-align: middle;
-  font-size: 12px;
   padding: 1px;
+  font-size: 12px;
 }
 
 .bingo-card th {
-  background: #007bff;
+  background: var(--blue);
   color: white;
 }
 
-.marked {
-  background: #ffeb3b;
+.bingo-card td.marked {
+  background: #fde047;
 }
 
-.completed {
-  background: #00ff00;
+.bingo-card td.completed {
+  background: #22c55e;
   font-weight: bold;
 }
 
 #history {
+  max-width: 1250px;
   margin-top: 8px;
-  font-size: 18px;
   text-align: center;
-  max-width: 1200px;
-  line-height: 1.6;
-  word-break: break-word;
+  font-size: 17px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
 }
 
-table.stats-table {
+.stats-scroll {
+  overflow-x: auto;
+}
+
+.stats-table {
   width: 100%;
   border-collapse: collapse;
   background: white;
@@ -344,14 +404,14 @@ table.stats-table {
 
 .stats-table th,
 .stats-table td {
-  border: 1px solid #ddd;
+  border: 1px solid #dbe3ef;
   padding: 8px;
   text-align: center;
   font-size: 14px;
 }
 
 .stats-table th {
-  background: #f3f3f3;
+  background: #f1f5f9;
 }
 
 .hidden {
@@ -359,16 +419,34 @@ table.stats-table {
 }
 
 @media (max-width: 700px) {
+  body {
+    padding: 10px;
+  }
+
+  h1 {
+    letter-spacing: -0.5px;
+  }
+
+  .action-row {
+    gap: 7px;
+  }
+
+  .action-row button,
+  .action-row .action-link {
+    font-size: 13px;
+    padding: 9px 10px;
+  }
+
   #current-letter {
-    font-size: 56px;
+    font-size: 60px;
   }
 
   #current-number {
-    font-size: 38px;
+    font-size: 45px;
   }
 
   #winnerTop {
-    font-size: 20px;
+    font-size: 19px;
   }
 }
 </style>
@@ -376,13 +454,12 @@ table.stats-table {
 
 <body>
 
-<div id="controls">
+<h1>Nico &amp; Neo Bingo</h1>
 
-  <div id="title">Nico & Neo Bingo</div>
+<div class="settings-panel">
+  <div class="settings-row">
 
-  <div id="settings">
-
-    <label for="gameMode">Läge:</label>
+    <label for="gameMode">Spelläge:</label>
 
     <select id="gameMode">
       <option value="standard">Standard Bingo</option>
@@ -393,7 +470,6 @@ table.stats-table {
 
     <div id="normalSettings">
       <label for="playerCount">Brickor:</label>
-
       <select id="playerCount">
         <option value="0">0</option>
         <option value="1">1</option>
@@ -417,9 +493,7 @@ table.stats-table {
     </div>
 
     <div id="paperSettings" class="hidden">
-
       <label for="paperSpeed">Tid mellan nummer:</label>
-
       <select id="paperSpeed">
         <option value="3000">3 sek</option>
         <option value="5000" selected>5 sek</option>
@@ -429,69 +503,71 @@ table.stats-table {
         <option value="20000">20 sek</option>
         <option value="30000">30 sek</option>
       </select>
-
     </div>
 
   </div>
-
 </div>
 
-<div id="controls">
+<div class="action-row">
 
-  <button id="startBtn">▶️ Starta</button>
+  <button id="startBtn" type="button">▶️ Starta</button>
 
-  <button id="resetBtn">⏹️ Stoppa/Återställ</button>
+  <button id="resetBtn" type="button">⏹️ Stoppa/Återställ</button>
 
-  <button id="toggleSpeakBtn">🔊 Tal: Av</button>
+  <button id="toggleSpeakBtn" type="button">🔊 Tal: Av</button>
 
   <a
     id="printBtn"
-    class="print-button"
+    class="action-link"
     href="bingo.pdf"
     target="_blank"
     rel="noopener noreferrer"
-  >
-    🖨️ Skriv ut bingobrickor
-  </a>
+  >🖨️ Skriv ut bingobrickor</a>
 
-  <button id="bingoBtn">🎉 BINGO</button>
+  <button id="bingoBtn" type="button">🎉 BINGO</button>
 
 </div>
 
-<div id="musicPanel">
+<div class="music-panel">
 
-  <label for="musicSelect">🎵 Musik:</label>
+  <div class="music-row">
 
-  <select id="musicSelect">
-    <option value="off">Musik av</option>
-    <option value="background.mp3">Original</option>
-    <option value="background1.mp3">Bakgrund 1</option>
-    <option value="background2.mp3">Bakgrund 2</option>
-    <option value="background3.mp3">Bakgrund 3</option>
-    <option value="halloween.mp3">Halloween</option>
-    <option value="jazz.mp3">Jazz</option>
-    <option value="jazz1.mp3">Jazz 1</option>
-    <option value="jazz2.mp3">Jazz 2</option>
-  </select>
+    <label for="musicSelect">🎵 Musik:</label>
 
-  <label for="musicMode">Spelläge musik:</label>
+    <select id="musicSelect">
+      <option value="off">Musik av</option>
+      <option value="background.mp3" selected>Original</option>
+      <option value="background1.mp3">Bakgrund 1</option>
+      <option value="background2.mp3">Bakgrund 2</option>
+      <option value="background3.mp3">Bakgrund 3</option>
+      <option value="halloween.mp3">Halloween</option>
+      <option value="jazz.mp3">Jazz</option>
+      <option value="jazz1.mp3">Jazz 1</option>
+      <option value="jazz2.mp3">Jazz 2</option>
+    </select>
 
-  <select id="musicMode">
-    <option value="repeat">Upprepa samma låt</option>
-    <option value="next">Spela nästa låt</option>
-  </select>
+    <div class="music-buttons">
+      <button id="prevMusicBtn" type="button" title="Föregående låt" aria-label="Föregående låt">⏮️</button>
+      <button id="playPauseMusicBtn" type="button" title="Pausa eller spela" aria-label="Pausa eller spela">▶️</button>
+      <button id="nextMusicBtn" type="button" title="Nästa låt" aria-label="Nästa låt">⏭️</button>
+      <button id="repeatMusicBtn" type="button" title="Upprepa samma låt" aria-label="Upprepa samma låt">🔁</button>
+    </div>
 
-  <label for="musicVolume">Volym:</label>
+    <label for="musicVolume">Volym:</label>
 
-  <input
-    type="range"
-    id="musicVolume"
-    min="0"
-    max="100"
-    value="30"
-  >
+    <input
+      type="range"
+      id="musicVolume"
+      min="0"
+      max="100"
+      value="30"
+    >
 
-  <span id="volumeValue">30%</span>
+    <span id="volumeValue">30%</span>
+
+  </div>
+
+  <div id="musicStatus" aria-live="polite"></div>
 
 </div>
 
@@ -505,12 +581,11 @@ table.stats-table {
   </div>
 
   <div id="remainingCount"></div>
-
   <div id="winnerTop"></div>
 
   <div id="currentButtons">
-    <button id="continueBtn">Fortsätt</button>
-    <button id="actionBtn">Starta nytt spel</button>
+    <button id="continueBtn" type="button">Fortsätt</button>
+    <button id="actionBtn" type="button">Starta nytt spel</button>
   </div>
 
 </div>
@@ -534,17 +609,23 @@ table.stats-table {
 <div id="adultStatsWrap" class="hidden">
   <div class="panel">
     <h3>Statistik</h3>
-    <div id="adultStats"></div>
+    <div class="stats-scroll" id="adultStats"></div>
   </div>
 </div>
 
 <div id="history"></div>
 
-<audio id="bgm"></audio>
+<audio id="bgm" preload="auto"></audio>
 <audio id="ding" src="audio/ding.mp3"></audio>
 <audio id="bingoSound" src="audio/bingo.mp3"></audio>
 
 <script>
+"use strict";
+
+/* =====================================================
+   GRUNDINSTÄLLNINGAR
+===================================================== */
+
 const ranges = {
   B: [1, 15],
   I: [16, 30],
@@ -553,7 +634,44 @@ const ranges = {
   O: [61, 75]
 };
 
-const allNumbers = Array.from({ length: 75 }, (_, i) => i + 1);
+const allNumbers = Array.from(
+  { length: 75 },
+  (_, i) => i + 1
+);
+
+const $ = id => document.getElementById(id);
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+function getLetter(number) {
+  if (number <= 15) return "B";
+  if (number <= 30) return "I";
+  if (number <= 45) return "N";
+  if (number <= 60) return "G";
+  return "O";
+}
+
+function isAdultMode() {
+  return $("gameMode").value === "adult";
+}
+
+function isPaperMode() {
+  return $("gameMode").value === "paper";
+}
+
+function isThreeLevelMode() {
+  return $("gameMode").value === "three-level";
+}
+
+/* =====================================================
+   MUSIKSPELARE
+===================================================== */
 
 const musicFiles = [
   "background.mp3",
@@ -566,23 +684,320 @@ const musicFiles = [
   "jazz2.mp3"
 ];
 
+const bgm = $("bgm");
+const musicSelect = $("musicSelect");
+const musicVolume = $("musicVolume");
+const musicStatus = $("musicStatus");
+
+let repeatSameSong = false;
+let musicStarted = false;
+let musicPausedByUser = false;
+
+function saveMusicSettings() {
+  try {
+    localStorage.setItem("bingoMusic", musicSelect.value);
+    localStorage.setItem("bingoMusicVolume", musicVolume.value);
+    localStorage.setItem("bingoRepeatSong", repeatSameSong ? "1" : "0");
+  } catch (error) {
+    // Spelet fungerar även om lagring är blockerad.
+  }
+}
+
+function loadMusicSettings() {
+  try {
+    const savedMusic = localStorage.getItem("bingoMusic");
+    const savedVolume = localStorage.getItem("bingoMusicVolume");
+    const savedRepeat = localStorage.getItem("bingoRepeatSong");
+
+    if (savedMusic && musicFiles.includes(savedMusic)) {
+      musicSelect.value = savedMusic;
+    }
+
+    if (savedMusic === "off") {
+      musicSelect.value = "off";
+    }
+
+    if (savedVolume !== null) {
+      const value = Number(savedVolume);
+      if (Number.isFinite(value)) {
+        musicVolume.value = Math.max(0, Math.min(100, value));
+      }
+    }
+
+    repeatSameSong = savedRepeat === "1";
+  } catch (error) {
+    repeatSameSong = false;
+  }
+
+  updateMusicVolume();
+  updateRepeatButton();
+  loadSelectedMusic();
+}
+
+function updateMusicVolume() {
+  bgm.volume = Number(musicVolume.value) / 100;
+  $("volumeValue").textContent = musicVolume.value + "%";
+}
+
+function updateMusicStatus(message = "") {
+  if (message) {
+    musicStatus.textContent = message;
+    return;
+  }
+
+  if (musicSelect.value === "off") {
+    musicStatus.textContent = "Musiken är avstängd";
+    return;
+  }
+
+  const selectedOption = musicSelect.selectedOptions[0];
+  const songName = selectedOption
+    ? selectedOption.textContent
+    : "Okänd låt";
+
+  if (bgm.paused) {
+    musicStatus.textContent = "Pausad: " + songName;
+  } else {
+    musicStatus.textContent = "🎵 Spelar nu: " + songName;
+  }
+}
+
+function updatePlayPauseButton() {
+  const button = $("playPauseMusicBtn");
+
+  if (musicSelect.value === "off" || bgm.paused) {
+    button.textContent = "▶️";
+    button.title = "Spela musik";
+    button.setAttribute("aria-label", "Spela musik");
+  } else {
+    button.textContent = "⏸️";
+    button.title = "Pausa musik";
+    button.setAttribute("aria-label", "Pausa musik");
+  }
+}
+
+function updateRepeatButton() {
+  const button = $("repeatMusicBtn");
+
+  button.classList.toggle("active", repeatSameSong);
+  button.setAttribute("aria-pressed", repeatSameSong ? "true" : "false");
+
+  button.title = repeatSameSong
+    ? "Upprepa samma låt är på"
+    : "Spela nästa låt är på";
+
+  button.setAttribute(
+    "aria-label",
+    repeatSameSong
+      ? "Upprepa samma låt är på"
+      : "Spela nästa låt är på"
+  );
+}
+
+function loadSelectedMusic() {
+  bgm.pause();
+
+  if (musicSelect.value === "off") {
+    bgm.removeAttribute("src");
+    bgm.load();
+    updatePlayPauseButton();
+    updateMusicStatus();
+    return;
+  }
+
+  bgm.src = "audio/" + musicSelect.value;
+  bgm.load();
+
+  updatePlayPauseButton();
+  updateMusicStatus();
+}
+
+async function playMusic() {
+  if (musicSelect.value === "off") {
+    updatePlayPauseButton();
+    updateMusicStatus();
+    return;
+  }
+
+  if (!bgm.getAttribute("src")) {
+    loadSelectedMusic();
+  }
+
+  try {
+    await bgm.play();
+
+    musicStarted = true;
+    musicPausedByUser = false;
+
+    updatePlayPauseButton();
+    updateMusicStatus();
+  } catch (error) {
+    updatePlayPauseButton();
+
+    updateMusicStatus(
+      "Tryck på ▶️ för att starta musiken om webbläsaren blockerar automatisk uppspelning."
+    );
+  }
+}
+
+function pauseMusic() {
+  bgm.pause();
+  musicPausedByUser = true;
+
+  updatePlayPauseButton();
+  updateMusicStatus();
+}
+
+function changeMusic(direction) {
+  const currentIndex = musicFiles.indexOf(musicSelect.value);
+
+  let nextIndex;
+
+  if (currentIndex === -1) {
+    nextIndex = direction < 0 ? musicFiles.length - 1 : 0;
+  } else {
+    nextIndex =
+      (currentIndex + direction + musicFiles.length) %
+      musicFiles.length;
+  }
+
+  musicSelect.value = musicFiles[nextIndex];
+
+  loadSelectedMusic();
+  saveMusicSettings();
+  playMusic();
+}
+
+function handleMusicEnded() {
+  if (musicSelect.value === "off") return;
+
+  if (repeatSameSong) {
+    bgm.currentTime = 0;
+    playMusic();
+  } else {
+    changeMusic(1);
+  }
+}
+
+function tryAutoplayMusic() {
+  if (musicSelect.value === "off") return;
+  if (musicPausedByUser) return;
+  if (!bgm.paused) return;
+
+  playMusic();
+}
+
+musicSelect.addEventListener("change", () => {
+  musicPausedByUser = false;
+  loadSelectedMusic();
+  saveMusicSettings();
+  playMusic();
+});
+
+musicVolume.addEventListener("input", () => {
+  updateMusicVolume();
+  saveMusicSettings();
+});
+
+$("prevMusicBtn").addEventListener("click", () => {
+  changeMusic(-1);
+});
+
+$("nextMusicBtn").addEventListener("click", () => {
+  changeMusic(1);
+});
+
+$("playPauseMusicBtn").addEventListener("click", () => {
+  if (musicSelect.value === "off") {
+    musicSelect.value = musicFiles[0];
+    loadSelectedMusic();
+    saveMusicSettings();
+    playMusic();
+    return;
+  }
+
+  if (bgm.paused) {
+    playMusic();
+  } else {
+    pauseMusic();
+  }
+});
+
+$("repeatMusicBtn").addEventListener("click", () => {
+  repeatSameSong = !repeatSameSong;
+  updateRepeatButton();
+  saveMusicSettings();
+
+  updateMusicStatus(
+    repeatSameSong
+      ? "🔁 Upprepa samma låt"
+      : "⏭️ Spela nästa låt automatiskt"
+  );
+});
+
+bgm.addEventListener("ended", handleMusicEnded);
+
+bgm.addEventListener("play", () => {
+  updatePlayPauseButton();
+  updateMusicStatus();
+});
+
+bgm.addEventListener("pause", () => {
+  updatePlayPauseButton();
+  updateMusicStatus();
+});
+
+bgm.addEventListener("error", () => {
+  updateMusicStatus(
+    "Kunde inte spela musikfilen. Kontrollera filnamnet i audio-mappen."
+  );
+});
+
+/*
+  Webbläsare tillåter inte alltid automatisk
+  musik med ljud. Därför försöker vi vid
+  sidladdning och sedan vid första interaktion.
+*/
+
+document.addEventListener("pointerdown", tryAutoplayMusic, {
+  once: true
+});
+
+document.addEventListener("keydown", tryAutoplayMusic, {
+  once: true
+});
+
+/* =====================================================
+   BINGO – SPELVARIABLER
+===================================================== */
+
 let remaining = [];
 let drawn = [];
 let intervalId = null;
+
 let speakEnabled = false;
 let currentLevel = 1;
 let waitingForContinue = false;
 let gameFinished = false;
+let gameStarted = false;
 
 let adultHiddenRemoved = [];
 let adultRoundEnded = false;
 let adultRoundPrepared = false;
-let adultRoundPaid = { 1: false, 2: false, 3: false };
+let adultRoundPaid = {
+  1: false,
+  2: false,
+  3: false
+};
 
 const adultSession = {
   round: 1,
   moneyEnabled: false,
-  pots: { 1: 0, 2: 0, 3: 0 },
+  pots: {
+    1: 0,
+    2: 0,
+    3: 0
+  },
   stats: Array.from({ length: 10 }, () => ({
     bought: 0,
     spent: 0,
@@ -593,233 +1008,84 @@ const adultSession = {
   }))
 };
 
-const $ = id => document.getElementById(id);
+/* =====================================================
+   LJUD FÖR BINGO
+===================================================== */
 
-const gameModeSelect = $("gameMode");
-const playerCountSelect = $("playerCount");
-const moneyEnabledInput = $("moneyEnabled");
-const paperSpeedSelect = $("paperSpeed");
-
-const normalSettings = $("normalSettings");
-const adultSettingsTop = $("adultSettingsTop");
-const paperSettings = $("paperSettings");
-
-const adultConfigWrap = $("adultConfigWrap");
-const adultPotsWrap = $("adultPotsWrap");
-const adultStatsWrap = $("adultStatsWrap");
-
-const adultPlayersConfigEl = $("adultPlayersConfig");
-const adultPotsEl = $("adultPots");
-const adultStatsEl = $("adultStats");
-
-const startBtn = $("startBtn");
-const bingoBtn = $("bingoBtn");
-const continueBtn = $("continueBtn");
-const actionBtn = $("actionBtn");
-const toggleSpeakBtn = $("toggleSpeakBtn");
-const resetBtn = $("resetBtn");
-
-const currentLetterEl = $("current-letter");
-const currentNumberEl = $("current-number");
-const remainingCountEl = $("remainingCount");
-const winnerTopEl = $("winnerTop");
-const statusBarEl = $("statusBar");
-const cardsContainer = $("cards");
-const historyEl = $("history");
-
-const bgm = $("bgm");
 const ding = $("ding");
 const bingoSound = $("bingoSound");
 
-const musicSelect = $("musicSelect");
-const musicMode = $("musicMode");
-const musicVolume = $("musicVolume");
-const volumeValue = $("volumeValue");
+let activeSpeech = null;
+let speechSequence = 0;
 
-function isAdultMode() {
-  return gameModeSelect.value === "adult";
-}
+function stopSpeech() {
+  speechSequence++;
 
-function isPaperMode() {
-  return gameModeSelect.value === "paper";
-}
-
-function getLetter(n) {
-  if (n <= 15) return "B";
-  if (n <= 30) return "I";
-  if (n <= 45) return "N";
-  if (n <= 60) return "G";
-  return "O";
-}
-
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+  if (activeSpeech) {
+    activeSpeech.pause();
+    activeSpeech = null;
   }
 }
 
-function saveMusicSettings() {
-  localStorage.setItem("bingoMusic", musicSelect.value);
-  localStorage.setItem("bingoMusicMode", musicMode.value);
-  localStorage.setItem("bingoMusicVolume", musicVolume.value);
+function playSound(audioElement) {
+  try {
+    audioElement.currentTime = 0;
+    audioElement.play().catch(() => {});
+  } catch (error) {}
 }
 
-function loadMusicSettings() {
-  const savedMusic = localStorage.getItem("bingoMusic");
-  const savedMode = localStorage.getItem("bingoMusicMode");
-  const savedVolume = localStorage.getItem("bingoMusicVolume");
+function playDrawSound(letter, number) {
+  stopSpeech();
 
-  if (savedMusic && [...musicFiles, "off"].includes(savedMusic)) {
-    musicSelect.value = savedMusic;
-  } else {
-    musicSelect.value = "background.mp3";
-  }
-
-  if (savedMode === "repeat" || savedMode === "next") {
-    musicMode.value = savedMode;
-  }
-
-  if (savedVolume !== null) {
-    musicVolume.value = savedVolume;
-  }
-
-  updateMusicVolume();
-  setMusicTrack(false);
-}
-
-function updateMusicVolume() {
-  bgm.volume = Number(musicVolume.value) / 100;
-  volumeValue.textContent = musicVolume.value + "%";
-}
-
-function setMusicTrack(shouldPlay = true) {
-  const selected = musicSelect.value;
-
-  bgm.pause();
-
-  if (selected === "off") {
-    bgm.removeAttribute("src");
-    bgm.load();
-    saveMusicSettings();
+  if (!speakEnabled) {
+    playSound(ding);
     return;
   }
 
-  bgm.src = "audio/" + selected;
-  bgm.load();
+  const sequence = speechSequence;
 
-  if (shouldPlay) {
-    bgm.play().catch(() => {});
-  }
+  const letterAudio = new Audio("audio/" + letter + ".mp3");
+  activeSpeech = letterAudio;
 
-  saveMusicSettings();
+  letterAudio.addEventListener("ended", () => {
+    if (sequence !== speechSequence) return;
+
+    const numberAudio = new Audio("audio/" + number + ".mp3");
+    activeSpeech = numberAudio;
+
+    numberAudio.play().catch(() => {});
+  }, { once: true });
+
+  letterAudio.play().catch(() => {});
 }
 
-function startMusic() {
-  if (musicSelect.value === "off") return;
-
-  if (!bgm.getAttribute("src")) {
-    setMusicTrack(false);
-  }
-
-  bgm.play().catch(() => {});
-}
-
-function stopMusic() {
-  bgm.pause();
-  bgm.currentTime = 0;
-}
-
-function nextMusicTrack() {
-  if (musicSelect.value === "off") return;
-
-  if (musicMode.value === "repeat") {
-    bgm.currentTime = 0;
-    bgm.play().catch(() => {});
-    return;
-  }
-
-  const index = musicFiles.indexOf(musicSelect.value);
-  const nextIndex = (index + 1) % musicFiles.length;
-
-  musicSelect.value = musicFiles[nextIndex];
-  setMusicTrack(true);
-}
-
-bgm.addEventListener("ended", nextMusicTrack);
-
-musicSelect.addEventListener("change", () => {
-  setMusicTrack(true);
-});
-
-musicMode.addEventListener("change", saveMusicSettings);
-
-musicVolume.addEventListener("input", () => {
-  updateMusicVolume();
-  saveMusicSettings();
-});
-
-function createAdultPlayerConfig() {
-  adultPlayersConfigEl.innerHTML = "";
-
-  for (let i = 1; i <= 10; i++) {
-    const row = document.createElement("div");
-    row.className = "adult-player-config";
-
-    const label = document.createElement("label");
-    label.textContent = `SPELARE ${i}`;
-
-    const select = document.createElement("select");
-
-    for (let n = 0; n <= 5; n++) {
-      const option = document.createElement("option");
-      option.value = n;
-      option.textContent = `${n} brickor`;
-
-      if (i <= 2 && n === 1) option.selected = true;
-
-      select.appendChild(option);
-    }
-
-    select.addEventListener("change", () => {
-      if (!adultRoundPrepared && !intervalId && !waitingForContinue) {
-        renderAdultCardsPreview();
-      }
-    });
-
-    row.appendChild(label);
-    row.appendChild(select);
-    adultPlayersConfigEl.appendChild(row);
-  }
-}
-
-function getAdultSelections() {
-  return Array.from(
-    adultPlayersConfigEl.querySelectorAll("select")
-  ).map(s => Number(s.value));
-}
+/* =====================================================
+   BINGOBRICKOR
+===================================================== */
 
 function buildCardData(rowCount) {
-  const cols = {};
+  const columns = {};
 
-  Object.entries(ranges).forEach(([letter, [start, end]]) => {
-    const arr = [];
+  Object.entries(ranges).forEach(([letter, limits]) => {
+    const numbers = [];
 
-    for (let n = start; n <= end; n++) arr.push(n);
+    for (let n = limits[0]; n <= limits[1]; n++) {
+      numbers.push(n);
+    }
 
-    shuffle(arr);
-    cols[letter] = arr.slice(0, rowCount);
+    shuffle(numbers);
+    columns[letter] = numbers.slice(0, rowCount);
   });
 
   const rows = [];
 
-  for (let r = 0; r < rowCount; r++) {
+  for (let row = 0; row < rowCount; row++) {
     rows.push([
-      cols.B[r],
-      cols.I[r],
-      cols.N[r],
-      cols.G[r],
-      cols.O[r]
+      columns.B[row],
+      columns.I[row],
+      columns.N[row],
+      columns.G[row],
+      columns.O[row]
     ]);
   }
 
@@ -836,32 +1102,40 @@ function createCardElement({
   const card = document.createElement("div");
   card.className = "bingo-card";
 
-  if (playerIndex !== null) card.dataset.playerIndex = playerIndex;
-  if (playerCardIndex !== null) card.dataset.playerCardIndex = playerCardIndex;
-  if (flatIndex !== null) card.dataset.flatIndex = flatIndex;
+  if (playerIndex !== null) {
+    card.dataset.playerIndex = playerIndex;
+  }
 
-  const titleEl = document.createElement("div");
-  titleEl.className = "card-title";
-  titleEl.textContent = title;
-  card.appendChild(titleEl);
+  if (playerCardIndex !== null) {
+    card.dataset.playerCardIndex = playerCardIndex;
+  }
+
+  if (flatIndex !== null) {
+    card.dataset.flatIndex = flatIndex;
+  }
+
+  const titleElement = document.createElement("div");
+  titleElement.className = "card-title";
+  titleElement.textContent = title;
+  card.appendChild(titleElement);
 
   const table = document.createElement("table");
-  const head = document.createElement("tr");
+  const heading = document.createElement("tr");
 
   ["B", "I", "N", "G", "O"].forEach(letter => {
     const th = document.createElement("th");
     th.textContent = letter;
-    head.appendChild(th);
+    heading.appendChild(th);
   });
 
-  table.appendChild(head);
+  table.appendChild(heading);
 
   rows.forEach(row => {
     const tr = document.createElement("tr");
 
-    row.forEach(num => {
+    row.forEach(number => {
       const td = document.createElement("td");
-      td.textContent = num;
+      td.textContent = number;
       tr.appendChild(td);
     });
 
@@ -873,117 +1147,179 @@ function createCardElement({
 }
 
 function renderNormalCards(count) {
-  cardsContainer.innerHTML = "";
-  const wrap = document.createElement("div");
-  wrap.className = "flat-card-wrap";
+  $("cards").innerHTML = "";
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "flat-card-wrap";
 
   for (let i = 0; i < count; i++) {
-    wrap.appendChild(createCardElement({
-      title: `Bricka ${i + 1}`,
+    wrapper.appendChild(createCardElement({
+      title: "Bricka " + (i + 1),
       rows: buildCardData(15),
       flatIndex: i
     }));
   }
 
-  cardsContainer.appendChild(wrap);
+  $("cards").appendChild(wrapper);
+}
+
+function createAdultPlayerConfig() {
+  const container = $("adultPlayersConfig");
+  container.innerHTML = "";
+
+  for (let i = 1; i <= 10; i++) {
+    const row = document.createElement("div");
+    row.className = "adult-player-config";
+
+    const label = document.createElement("label");
+    label.textContent = "SPELARE " + i;
+
+    const select = document.createElement("select");
+
+    for (let n = 0; n <= 5; n++) {
+      const option = document.createElement("option");
+
+      option.value = n;
+      option.textContent = n + " brickor";
+
+      if (i <= 2 && n === 1) {
+        option.selected = true;
+      }
+
+      select.appendChild(option);
+    }
+
+    select.addEventListener("change", () => {
+      if (
+        !adultRoundPrepared &&
+        !gameStarted &&
+        !waitingForContinue
+      ) {
+        renderAdultCardsPreview();
+      }
+    });
+
+    row.appendChild(label);
+    row.appendChild(select);
+    container.appendChild(row);
+  }
+}
+
+function getAdultSelections() {
+  return Array.from(
+    $("adultPlayersConfig").querySelectorAll("select")
+  ).map(select => Number(select.value));
 }
 
 function renderAdultCardsPreview() {
-  cardsContainer.innerHTML = "";
+  const container = $("cards");
+  container.innerHTML = "";
 
   const selections = getAdultSelections();
+
   const board = document.createElement("div");
   board.className = "adult-board";
 
   selections.forEach((count, playerIndex) => {
     if (count === 0) return;
 
-    const col = document.createElement("div");
-    col.className = "adult-player-column";
+    const column = document.createElement("div");
+    column.className = "adult-player-column";
 
     const title = document.createElement("div");
     title.className = "adult-player-title";
-    title.textContent = `SPELARE ${playerIndex + 1}`;
-    col.appendChild(title);
+    title.textContent = "SPELARE " + (playerIndex + 1);
 
-    const holder = document.createElement("div");
-    holder.className = "adult-player-cards";
+    column.appendChild(title);
+
+    const cardHolder = document.createElement("div");
+    cardHolder.className = "adult-player-cards";
 
     for (let i = 0; i < count; i++) {
-      holder.appendChild(createCardElement({
-        title: `Bricka ${i + 1}`,
+      cardHolder.appendChild(createCardElement({
+        title: "Bricka " + (i + 1),
         rows: buildCardData(3),
         playerIndex,
         playerCardIndex: i
       }));
     }
 
-    col.appendChild(holder);
-    board.appendChild(col);
+    column.appendChild(cardHolder);
+    board.appendChild(column);
   });
 
-  cardsContainer.appendChild(board);
+  container.appendChild(board);
 }
 
-function stopGame() {
-  if (intervalId) {
-    clearInterval(intervalId);
-    intervalId = null;
-  }
-}
+/* =====================================================
+   MARKERING OCH VINSTKONTROLL
+===================================================== */
 
-function clearWinnerCards() {
-  cardsContainer.querySelectorAll(".winner-card").forEach(card => {
-    card.classList.remove("winner-card");
-  });
-}
-
-function markCards(num) {
-  cardsContainer.querySelectorAll("td").forEach(td => {
-    if (Number(td.textContent) === num) {
-      td.classList.add("marked");
+function markCards(number) {
+  $("cards").querySelectorAll("td").forEach(cell => {
+    if (Number(cell.textContent) === number) {
+      cell.classList.add("marked");
     }
   });
 }
 
 function updateCompletedRowHighlights() {
-  cardsContainer.querySelectorAll(".bingo-card").forEach(card => {
-    const rows = Array.from(card.querySelectorAll("tr")).slice(1);
+  $("cards").querySelectorAll(".bingo-card").forEach(card => {
+    const rows = Array.from(
+      card.querySelectorAll("tr")
+    ).slice(1);
 
     rows.forEach(row => {
       const cells = Array.from(row.querySelectorAll("td"));
-      const complete = cells.length > 0 &&
-        cells.every(c => c.classList.contains("marked"));
 
-      cells.forEach(c => c.classList.toggle("completed", complete));
+      const completed =
+        cells.length > 0 &&
+        cells.every(cell => cell.classList.contains("marked"));
+
+      cells.forEach(cell => {
+        cell.classList.toggle("completed", completed);
+      });
     });
   });
 }
 
 function getCompletedRowsForCard(card) {
-  const rows = Array.from(card.querySelectorAll("tr")).slice(1);
+  const rows = Array.from(
+    card.querySelectorAll("tr")
+  ).slice(1);
 
   return rows.filter(row => {
     const cells = Array.from(row.querySelectorAll("td"));
 
-    return cells.length > 0 &&
-      cells.every(c => c.classList.contains("marked"));
+    return (
+      cells.length > 0 &&
+      cells.every(cell => cell.classList.contains("marked"))
+    );
   }).length;
 }
 
 function getWinnersForLevel(level) {
   const winners = [];
 
-  cardsContainer.querySelectorAll(".bingo-card").forEach(card => {
+  $("cards").querySelectorAll(".bingo-card").forEach(card => {
     if (getCompletedRowsForCard(card) >= level) {
       winners.push({
         cardEl: card,
-        playerIndex: card.dataset.playerIndex !== undefined
-          ? Number(card.dataset.playerIndex) : null,
-        playerCardIndex: card.dataset.playerCardIndex !== undefined
-          ? Number(card.dataset.playerCardIndex) : null,
-        flatIndex: card.dataset.flatIndex !== undefined
-          ? Number(card.dataset.flatIndex) : null
+
+        playerIndex:
+          card.dataset.playerIndex !== undefined
+            ? Number(card.dataset.playerIndex)
+            : null,
+
+        playerCardIndex:
+          card.dataset.playerCardIndex !== undefined
+            ? Number(card.dataset.playerCardIndex)
+            : null,
+
+        flatIndex:
+          card.dataset.flatIndex !== undefined
+            ? Number(card.dataset.flatIndex)
+            : null
       });
     }
   });
@@ -992,104 +1328,136 @@ function getWinnersForLevel(level) {
 }
 
 function formatWinnerNames(winners) {
-  return winners.map(w => {
+  return winners.map(winner => {
     if (isAdultMode()) {
-      return `Spelare ${w.playerIndex + 1} - Bricka ${w.playerCardIndex + 1}`;
+      return (
+        "Spelare " + (winner.playerIndex + 1) +
+        " - Bricka " + (winner.playerCardIndex + 1)
+      );
     }
 
-    return `Bricka ${w.flatIndex + 1}`;
+    return "Bricka " + (winner.flatIndex + 1);
   }).join(", ");
+}
+
+function clearWinnerCards() {
+  $("cards").querySelectorAll(".winner-card").forEach(card => {
+    card.classList.remove("winner-card");
+  });
 }
 
 function markWinnerCards(winners) {
   clearWinnerCards();
 
-  winners.forEach(w => {
-    w.cardEl.classList.add("winner-card");
+  winners.forEach(winner => {
+    winner.cardEl.classList.add("winner-card");
   });
 }
 
-function playDrawSound(letter, num) {
-  if (!speakEnabled) {
-    ding.currentTime = 0;
-    ding.play().catch(() => {});
-    return;
-  }
-
-  const letterAudio = new Audio(`audio/${letter}.mp3`);
-
-  letterAudio.onended = () => {
-    const numberAudio = new Audio(`audio/${num}.mp3`);
-    numberAudio.play().catch(() => {});
-  };
-
-  letterAudio.play().catch(() => {});
-}
+/* =====================================================
+   HISTORIK OCH STATUS
+===================================================== */
 
 function updateHistory() {
   if (!drawn.length) {
-    historyEl.textContent = "";
+    $("history").textContent = "";
     return;
   }
 
-  historyEl.textContent =
+  $("history").textContent =
     "Dragna nummer: " +
-    drawn.map(n => `${getLetter(n)}${n}`).join(" - ");
+    drawn.map(number => {
+      return getLetter(number) + number;
+    }).join(" - ");
 }
 
 function updateRemainingCount() {
   if (isAdultMode() || isPaperMode()) {
-    remainingCountEl.textContent = `Kvar att dra: ${remaining.length}`;
+    $("remainingCount").textContent =
+      "Kvar att dra: " + remaining.length;
   } else {
-    remainingCountEl.textContent = "";
+    $("remainingCount").textContent = "";
   }
 }
 
+function updateStatus() {
+  if (isPaperMode()) {
+    $("statusBar").textContent = "Pappersbingo";
+  } else if (isAdultMode()) {
+    $("statusBar").textContent =
+      "Bingo 3 nivå VUXEN – Runda " + adultSession.round;
+  } else if (isThreeLevelMode()) {
+    $("statusBar").textContent =
+      "Bingo 3 nivåer – Bingo " + currentLevel;
+  } else {
+    $("statusBar").textContent = "Standard Bingo";
+  }
+}
+
+function stopGame() {
+  if (intervalId !== null) {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
+}
+
+/* =====================================================
+   VUXENBINGO – POTTAR OCH STATISTIK
+===================================================== */
+
 function renderAdultPots() {
-  adultPotsEl.innerHTML = "";
+  const container = $("adultPots");
+  container.innerHTML = "";
 
   [1, 2, 3].forEach(level => {
-    const div = document.createElement("div");
-    div.className = `pot-box pot${level}`;
+    const box = document.createElement("div");
+    box.className = "pot-box pot" + level;
 
-    div.innerHTML = `
-      Pot ${level}: ${
-        adultSession.moneyEnabled
-          ? adultSession.pots[level] + " kr"
-          : "Avstängt"
-      }
-      <small>${adultRoundPaid[level] ? "Utbetald denna runda" : "Öppen"}</small>
-    `;
+    const value = adultSession.moneyEnabled
+      ? adultSession.pots[level] + " kr"
+      : "Avstängt";
 
-    adultPotsEl.appendChild(div);
+    box.innerHTML =
+      "Pot " + level + ": " + value +
+      "<small>" +
+      (adultRoundPaid[level]
+        ? "Utbetald denna runda"
+        : "Öppen") +
+      "</small>";
+
+    container.appendChild(box);
   });
 }
 
 function renderAdultStats() {
-  const rows = adultSession.stats.map((s, i) => `
-    <tr>
-      <td>Spelare ${i + 1}</td>
-      <td>${s.bought}</td>
-      <td>${s.spent} kr</td>
-      <td>${s.wins1}</td>
-      <td>${s.wins2}</td>
-      <td>${s.wins3}</td>
-      <td>${s.won} kr</td>
-    </tr>
-  `).join("");
-
-  adultStatsEl.innerHTML = `
-    <table class="stats-table">
+  const rows = adultSession.stats.map((stat, index) => {
+    return `
       <tr>
-        <th>Spelare</th>
-        <th>Köpta brickor</th>
-        <th>Satsat</th>
-        <th>Pot 1</th>
-        <th>Pot 2</th>
-        <th>Pot 3</th>
-        <th>Vunnit</th>
+        <td>Spelare ${index + 1}</td>
+        <td>${stat.bought}</td>
+        <td>${stat.spent} kr</td>
+        <td>${stat.wins1}</td>
+        <td>${stat.wins2}</td>
+        <td>${stat.wins3}</td>
+        <td>${stat.won} kr</td>
       </tr>
-      ${rows}
+    `;
+  }).join("");
+
+  $("adultStats").innerHTML = `
+    <table class="stats-table">
+      <thead>
+        <tr>
+          <th>Spelare</th>
+          <th>Köpta brickor</th>
+          <th>Satsat</th>
+          <th>Pot 1</th>
+          <th>Pot 2</th>
+          <th>Pot 3</th>
+          <th>Vunnit</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
     </table>
   `;
 }
@@ -1097,28 +1465,35 @@ function renderAdultStats() {
 function distributeRoundMoney(totalMoney) {
   if (!adultSession.moneyEnabled || totalMoney <= 0) return;
 
-  const p1 = Math.floor(totalMoney * 20 / 100);
-  const p2 = Math.floor(totalMoney * 30 / 100);
-  const p3 = totalMoney - p1 - p2;
+  const pot1 = Math.floor(totalMoney * 0.20);
+  const pot2 = Math.floor(totalMoney * 0.30);
+  const pot3 = totalMoney - pot1 - pot2;
 
-  adultSession.pots[1] += p1;
-  adultSession.pots[2] += p2;
-  adultSession.pots[3] += p3;
+  adultSession.pots[1] += pot1;
+  adultSession.pots[2] += pot2;
+  adultSession.pots[3] += pot3;
 }
 
 function prepareAdultRound() {
-  drawn = [];
-  adultRoundPaid = { 1: false, 2: false, 3: false };
-
   const selections = getAdultSelections();
-  const totalCards = selections.reduce((a, b) => a + b, 0);
+  const totalCards = selections.reduce(
+    (sum, count) => sum + count,
+    0
+  );
 
   if (!totalCards) {
-    winnerTopEl.textContent = "Välj minst en bricka.";
+    $("winnerTop").textContent = "Välj minst en bricka.";
     return false;
   }
 
-  adultSession.moneyEnabled = moneyEnabledInput.checked;
+  drawn = [];
+  adultRoundPaid = {
+    1: false,
+    2: false,
+    3: false
+  };
+
+  adultSession.moneyEnabled = $("moneyEnabled").checked;
 
   selections.forEach((count, index) => {
     adultSession.stats[index].bought += count;
@@ -1128,15 +1503,24 @@ function prepareAdultRound() {
     }
   });
 
-  distributeRoundMoney(adultSession.moneyEnabled ? totalCards * 2 : 0);
+  distributeRoundMoney(
+    adultSession.moneyEnabled ? totalCards * 2 : 0
+  );
 
-  const removed = [...allNumbers];
-  shuffle(removed);
+  /*
+    Exakt 15 nummer tas bort i hemlighet.
+    75 - 15 = 60 dragbara nummer.
+  */
 
-  adultHiddenRemoved = removed.slice(0, 15);
+  const shuffledNumbers = shuffle([...allNumbers]);
 
-  remaining = allNumbers.filter(n => !adultHiddenRemoved.includes(n));
-  shuffle(remaining);
+  adultHiddenRemoved = shuffledNumbers.slice(0, 15);
+
+  const hiddenSet = new Set(adultHiddenRemoved);
+
+  remaining = shuffle(
+    allNumbers.filter(number => !hiddenSet.has(number))
+  );
 
   renderAdultCardsPreview();
   renderAdultPots();
@@ -1144,6 +1528,7 @@ function prepareAdultRound() {
   updateRemainingCount();
 
   adultRoundPrepared = true;
+
   return true;
 }
 
@@ -1157,8 +1542,8 @@ function nextAdultLevel() {
 function handleAdultWin(level, winners) {
   stopGame();
 
-  waitingForContinue = level < 3;
   adultRoundPaid[level] = true;
+  waitingForContinue = level < 3;
 
   markWinnerCards(winners);
   updateCompletedRowHighlights();
@@ -1167,50 +1552,71 @@ function handleAdultWin(level, winners) {
 
   if (adultSession.moneyEnabled) {
     const pot = adultSession.pots[level];
+
     const share = Math.floor(pot / winners.length);
     const remainder = pot - share * winners.length;
 
     const payouts = {};
 
-    winners.forEach(w => {
-      const p = w.playerIndex;
+    winners.forEach(winner => {
+      const player = winner.playerIndex;
 
-      payouts[p] = (payouts[p] || 0) + share;
-      adultSession.stats[p].won += share;
+      payouts[player] = (payouts[player] || 0) + share;
 
-      if (level === 1) adultSession.stats[p].wins1++;
-      if (level === 2) adultSession.stats[p].wins2++;
-      if (level === 3) adultSession.stats[p].wins3++;
+      const stat = adultSession.stats[player];
+
+      stat.won += share;
+
+      if (level === 1) stat.wins1++;
+      if (level === 2) stat.wins2++;
+      if (level === 3) stat.wins3++;
     });
 
     adultSession.pots[level] = 0;
 
-    if (level === 1) adultSession.pots[2] += remainder;
-    if (level === 2) adultSession.pots[3] += remainder;
-    if (level === 3) adultSession.pots[3] += remainder;
+    if (level === 1) {
+      adultSession.pots[2] += remainder;
+    } else {
+      adultSession.pots[3] += remainder;
+    }
 
-    payoutText = " " + Object.entries(payouts)
-      .map(([p, amount]) => `Spelare ${Number(p) + 1}: ${amount} kr`)
-      .join(" | ");
+    payoutText =
+      " | " +
+      Object.entries(payouts).map(([player, amount]) => {
+        return (
+          "Spelare " + (Number(player) + 1) +
+          ": " + amount + " kr"
+        );
+      }).join(" | ");
+  } else {
+    winners.forEach(winner => {
+      const stat = adultSession.stats[winner.playerIndex];
+
+      if (level === 1) stat.wins1++;
+      if (level === 2) stat.wins2++;
+      if (level === 3) stat.wins3++;
+    });
   }
 
-  winnerTopEl.textContent =
-    "BINGO! " + formatWinnerNames(winners) + payoutText;
+  $("winnerTop").textContent =
+    "BINGO! " +
+    formatWinnerNames(winners) +
+    payoutText;
 
-  bingoSound.currentTime = 0;
-  bingoSound.play().catch(() => {});
+  playSound(bingoSound);
 
   renderAdultPots();
   renderAdultStats();
 
   if (level === 3) {
     gameFinished = true;
-    continueBtn.style.display = "none";
-    actionBtn.style.display = "inline-block";
-    actionBtn.textContent = "Starta nytt spel";
-    actionBtn.dataset.action = "new-game";
+
+    $("continueBtn").style.display = "none";
+    $("actionBtn").style.display = "inline-flex";
+    $("actionBtn").textContent = "Starta nytt spel";
+    $("actionBtn").dataset.action = "new-game";
   } else {
-    continueBtn.style.display = "inline-block";
+    $("continueBtn").style.display = "inline-flex";
   }
 
   updateStatus();
@@ -1218,7 +1624,8 @@ function handleAdultWin(level, winners) {
 
 function checkAdultWin() {
   const level = nextAdultLevel();
-  if (!level) return false;
+
+  if (level === null) return false;
 
   const winners = getWinnersForLevel(level);
 
@@ -1230,33 +1637,44 @@ function checkAdultWin() {
   return false;
 }
 
+/* =====================================================
+   STANDARD OCH 3 NIVÅER
+===================================================== */
+
 function evaluateNormalWin() {
-  const level = gameModeSelect.value === "standard" ? 1 : currentLevel;
+  const level = isThreeLevelMode() ? currentLevel : 1;
   const winners = getWinnersForLevel(level);
 
-  if (!winners.length) return;
+  if (!winners.length) return false;
 
   stopGame();
+
   markWinnerCards(winners);
   updateCompletedRowHighlights();
 
-  winnerTopEl.textContent = "BINGO! " + formatWinnerNames(winners);
+  $("winnerTop").textContent =
+    "BINGO! " + formatWinnerNames(winners);
 
-  bingoSound.currentTime = 0;
-  bingoSound.play().catch(() => {});
+  playSound(bingoSound);
 
-  if (gameModeSelect.value === "standard" || currentLevel === 3) {
+  if (!isThreeLevelMode() || currentLevel === 3) {
     gameFinished = true;
-    actionBtn.style.display = "inline-block";
-    actionBtn.textContent = "Starta nytt spel";
-    actionBtn.dataset.action = "new-game";
+
+    $("actionBtn").style.display = "inline-flex";
+    $("actionBtn").textContent = "Starta nytt spel";
+    $("actionBtn").dataset.action = "new-game";
   } else {
     waitingForContinue = true;
-    continueBtn.style.display = "inline-block";
+    $("continueBtn").style.display = "inline-flex";
   }
 
   updateStatus();
+  return true;
 }
+
+/* =====================================================
+   DRAGNING AV NUMMER
+===================================================== */
 
 function finishRound() {
   stopGame();
@@ -1265,49 +1683,56 @@ function finishRound() {
     adultRoundEnded = true;
     adultRoundPrepared = false;
 
-    winnerTopEl.textContent =
+    $("winnerTop").textContent =
       "Rundan är slut. Ingen Bingo 3 efter 60 drag.";
 
-    actionBtn.style.display = "inline-block";
-    actionBtn.textContent = "Nästa runda";
-    actionBtn.dataset.action = "next-round";
+    $("actionBtn").style.display = "inline-flex";
+    $("actionBtn").textContent = "Nästa runda";
+    $("actionBtn").dataset.action = "next-round";
   } else {
     gameFinished = true;
-    winnerTopEl.textContent = "Alla nummer är dragna.";
 
-    actionBtn.style.display = "inline-block";
-    actionBtn.textContent = "Starta nytt spel";
-    actionBtn.dataset.action = "new-game";
+    $("winnerTop").textContent = "Alla nummer är dragna.";
+
+    $("actionBtn").style.display = "inline-flex";
+    $("actionBtn").textContent = "Starta nytt spel";
+    $("actionBtn").dataset.action = "new-game";
   }
 
   updateStatus();
 }
 
 function drawNumber() {
-  if (waitingForContinue || gameFinished || adultRoundEnded) return;
+  if (
+    waitingForContinue ||
+    gameFinished ||
+    adultRoundEnded
+  ) {
+    return;
+  }
 
   if (!remaining.length) {
     finishRound();
     return;
   }
 
-  const num = remaining.shift();
-  drawn.push(num);
+  const number = remaining.shift();
+  const letter = getLetter(number);
 
-  const letter = getLetter(num);
+  drawn.push(number);
 
-  currentLetterEl.textContent = letter;
-  currentNumberEl.textContent = num;
+  $("current-letter").textContent = letter;
+  $("current-number").textContent = number;
 
   updateHistory();
   updateRemainingCount();
 
   if (!isPaperMode()) {
-    markCards(num);
+    markCards(number);
     updateCompletedRowHighlights();
   }
 
-  playDrawSound(letter, num);
+  playDrawSound(letter, number);
 
   if (isAdultMode()) {
     checkAdultWin();
@@ -1315,50 +1740,89 @@ function drawNumber() {
     evaluateNormalWin();
   }
 
-  if (!remaining.length && !waitingForContinue && !gameFinished) {
+  if (
+    remaining.length === 0 &&
+    !waitingForContinue &&
+    !gameFinished &&
+    !adultRoundEnded
+  ) {
     finishRound();
   }
 }
 
+/* =====================================================
+   START AV SPELLÄGEN
+===================================================== */
+
 function startPaperGame() {
-  if (intervalId || waitingForContinue || gameFinished) return;
+  if (
+    intervalId !== null ||
+    waitingForContinue ||
+    gameFinished
+  ) {
+    return;
+  }
 
-  if (!drawn.length) {
-    remaining = [...allNumbers];
-    shuffle(remaining);
+  if (!gameStarted) {
+    remaining = shuffle([...allNumbers]);
+    drawn = [];
 
-    cardsContainer.innerHTML = "";
-    winnerTopEl.textContent = "";
-    updateRemainingCount();
+    $("cards").innerHTML = "";
+    $("winnerTop").textContent = "";
+
+    gameStarted = true;
   }
 
   drawNumber();
 
   if (!gameFinished && !waitingForContinue) {
-    intervalId = setInterval(drawNumber, Number(paperSpeedSelect.value));
+    intervalId = setInterval(
+      drawNumber,
+      Number($("paperSpeed").value)
+    );
   }
 }
 
 function startAdultGame() {
-  if (intervalId || waitingForContinue || gameFinished || adultRoundEnded) return;
+  if (
+    intervalId !== null ||
+    waitingForContinue ||
+    gameFinished ||
+    adultRoundEnded
+  ) {
+    return;
+  }
 
   if (!adultRoundPrepared) {
     if (!prepareAdultRound()) return;
   }
 
+  gameStarted = true;
+
   drawNumber();
 
-  if (!waitingForContinue && !gameFinished && !adultRoundEnded) {
+  if (
+    !waitingForContinue &&
+    !gameFinished &&
+    !adultRoundEnded
+  ) {
     intervalId = setInterval(drawNumber, 5000);
   }
 }
 
 function startNormalGame() {
-  if (intervalId || waitingForContinue || gameFinished) return;
+  if (
+    intervalId !== null ||
+    waitingForContinue ||
+    gameFinished
+  ) {
+    return;
+  }
 
-  if (!drawn.length) {
-    remaining = [...allNumbers];
-    shuffle(remaining);
+  if (!gameStarted) {
+    remaining = shuffle([...allNumbers]);
+    drawn = [];
+    gameStarted = true;
   }
 
   drawNumber();
@@ -1369,8 +1833,6 @@ function startNormalGame() {
 }
 
 function startGame() {
-  startMusic();
-
   if (isPaperMode()) {
     startPaperGame();
   } else if (isAdultMode()) {
@@ -1380,12 +1842,19 @@ function startGame() {
   }
 }
 
+/* =====================================================
+   FORTSÄTT EFTER BINGO
+===================================================== */
+
 function continueAfterWin() {
+  if (!waitingForContinue) return;
+
   waitingForContinue = false;
+
   clearWinnerCards();
 
-  winnerTopEl.textContent = "";
-  continueBtn.style.display = "none";
+  $("winnerTop").textContent = "";
+  $("continueBtn").style.display = "none";
 
   if (isPaperMode()) {
     if (!remaining.length) {
@@ -1393,7 +1862,11 @@ function continueAfterWin() {
       return;
     }
 
-    intervalId = setInterval(drawNumber, Number(paperSpeedSelect.value));
+    intervalId = setInterval(
+      drawNumber,
+      Number($("paperSpeed").value)
+    );
+
     return;
   }
 
@@ -1412,9 +1885,7 @@ function continueAfterWin() {
   currentLevel++;
   updateStatus();
 
-  const winners = getWinnersForLevel(currentLevel);
-
-  if (winners.length) {
+  if (getWinnersForLevel(currentLevel).length) {
     evaluateNormalWin();
     return;
   }
@@ -1427,34 +1898,65 @@ function continueAfterWin() {
   intervalId = setInterval(drawNumber, 5000);
 }
 
+/* =====================================================
+   PAPPERSBINGO – BINGOKNAPP
+===================================================== */
+
 function paperBingoPause() {
-  if (!isPaperMode() || !drawn.length || waitingForContinue || gameFinished) return;
+  if (
+    !isPaperMode() ||
+    !gameStarted ||
+    !drawn.length ||
+    waitingForContinue ||
+    gameFinished
+  ) {
+    return;
+  }
 
   stopGame();
+
   waitingForContinue = true;
 
-  winnerTopEl.textContent = "BINGO! Kontrollera brickan.";
-  continueBtn.style.display = "inline-block";
+  $("winnerTop").textContent =
+    "BINGO! Kontrollera brickan.";
 
-  bingoSound.currentTime = 0;
-  bingoSound.play().catch(() => {});
+  $("continueBtn").style.display = "inline-flex";
+
+  playSound(bingoSound);
 }
+
+/* =====================================================
+   ÅTERSTÄLLNING
+===================================================== */
 
 function resetAdultSession() {
   adultSession.round = 1;
-  adultSession.moneyEnabled = moneyEnabledInput.checked;
-  adultSession.pots = { 1: 0, 2: 0, 3: 0 };
+  adultSession.moneyEnabled = $("moneyEnabled").checked;
 
-  adultSession.stats = Array.from({ length: 10 }, () => ({
-    bought: 0,
-    spent: 0,
-    wins1: 0,
-    wins2: 0,
-    wins3: 0,
-    won: 0
-  }));
+  adultSession.pots = {
+    1: 0,
+    2: 0,
+    3: 0
+  };
 
-  adultRoundPaid = { 1: false, 2: false, 3: false };
+  adultSession.stats = Array.from(
+    { length: 10 },
+    () => ({
+      bought: 0,
+      spent: 0,
+      wins1: 0,
+      wins2: 0,
+      wins3: 0,
+      won: 0
+    })
+  );
+
+  adultRoundPaid = {
+    1: false,
+    2: false,
+    3: false
+  };
+
   adultRoundPrepared = false;
   adultRoundEnded = false;
 
@@ -1464,7 +1966,12 @@ function resetAdultSession() {
 
 function resetGame() {
   stopGame();
-  stopMusic();
+  stopSpeech();
+
+  /*
+    Musiken stoppas INTE här.
+    Den fortsätter oberoende av bingot.
+  */
 
   remaining = [];
   drawn = [];
@@ -1472,61 +1979,74 @@ function resetGame() {
   currentLevel = 1;
   waitingForContinue = false;
   gameFinished = false;
+  gameStarted = false;
+
   adultRoundEnded = false;
   adultRoundPrepared = false;
 
-  currentLetterEl.textContent = "-";
-  currentNumberEl.textContent = "";
-  winnerTopEl.textContent = "";
-  remainingCountEl.textContent = "";
-  historyEl.textContent = "";
+  $("current-letter").textContent = "-";
+  $("current-number").textContent = "";
 
-  continueBtn.style.display = "none";
-  actionBtn.style.display = "none";
+  $("winnerTop").textContent = "";
+  $("remainingCount").textContent = "";
+  $("history").textContent = "";
 
-  cardsContainer.innerHTML = "";
+  $("continueBtn").style.display = "none";
+  $("actionBtn").style.display = "none";
+
+  $("cards").innerHTML = "";
 
   if (isAdultMode()) {
     resetAdultSession();
     renderAdultCardsPreview();
   } else if (!isPaperMode()) {
-    renderNormalCards(Number(playerCountSelect.value));
+    renderNormalCards(Number($("playerCount").value));
   }
 
   updateRemainingCount();
   updateStatus();
 }
 
-function updateStatus() {
-  if (isPaperMode()) {
-    statusBarEl.textContent = "Pappersbingo";
-  } else if (isAdultMode()) {
-    statusBarEl.textContent =
-      `Bingo 3 nivå VUXEN – Runda ${adultSession.round}`;
-  } else if (gameModeSelect.value === "three-level") {
-    statusBarEl.textContent =
-      `Bingo 3 nivåer – Bingo ${currentLevel}`;
-  } else {
-    statusBarEl.textContent = "Standard Bingo";
-  }
-}
-
 function refreshModeUI() {
   const adult = isAdultMode();
   const paper = isPaperMode();
 
-  normalSettings.classList.toggle("hidden", adult || paper);
-  adultSettingsTop.classList.toggle("hidden", !adult);
-  adultConfigWrap.classList.toggle("hidden", !adult);
-  adultPotsWrap.classList.toggle("hidden", !adult);
-  adultStatsWrap.classList.toggle("hidden", !adult);
-  paperSettings.classList.toggle("hidden", !paper);
+  $("normalSettings").classList.toggle(
+    "hidden",
+    adult || paper
+  );
+
+  $("adultSettingsTop").classList.toggle(
+    "hidden",
+    !adult
+  );
+
+  $("adultConfigWrap").classList.toggle(
+    "hidden",
+    !adult
+  );
+
+  $("adultPotsWrap").classList.toggle(
+    "hidden",
+    !adult
+  );
+
+  $("adultStatsWrap").classList.toggle(
+    "hidden",
+    !adult
+  );
+
+  $("paperSettings").classList.toggle(
+    "hidden",
+    !paper
+  );
 
   updateStatus();
 }
 
 function nextAdultRound() {
   stopGame();
+  stopSpeech();
 
   adultSession.round++;
 
@@ -1537,15 +2057,22 @@ function nextAdultRound() {
   adultRoundPrepared = false;
   waitingForContinue = false;
   gameFinished = false;
-  adultRoundPaid = { 1: false, 2: false, 3: false };
+  gameStarted = false;
 
-  currentLetterEl.textContent = "-";
-  currentNumberEl.textContent = "";
-  winnerTopEl.textContent = "";
-  historyEl.textContent = "";
+  adultRoundPaid = {
+    1: false,
+    2: false,
+    3: false
+  };
 
-  actionBtn.style.display = "none";
-  continueBtn.style.display = "none";
+  $("current-letter").textContent = "-";
+  $("current-number").textContent = "";
+
+  $("winnerTop").textContent = "";
+  $("history").textContent = "";
+
+  $("actionBtn").style.display = "none";
+  $("continueBtn").style.display = "none";
 
   renderAdultCardsPreview();
   updateRemainingCount();
@@ -1553,37 +2080,36 @@ function nextAdultRound() {
   updateStatus();
 }
 
-gameModeSelect.addEventListener("change", () => {
-  refreshModeUI();
-  resetGame();
+/* =====================================================
+   KNAPPAR OCH HÄNDELSER
+===================================================== */
+
+$("startBtn").addEventListener("click", startGame);
+
+$("resetBtn").addEventListener("click", resetGame);
+
+$("continueBtn").addEventListener(
+  "click",
+  continueAfterWin
+);
+
+$("toggleSpeakBtn").addEventListener("click", () => {
+  speakEnabled = !speakEnabled;
+
+  $("toggleSpeakBtn").textContent =
+    "🔊 Tal: " + (speakEnabled ? "På" : "Av");
 });
 
-playerCountSelect.addEventListener("change", () => {
-  if (!isAdultMode() && !isPaperMode()) resetGame();
-});
-
-startBtn.addEventListener("click", startGame);
-
-resetBtn.addEventListener("click", resetGame);
-
-continueBtn.addEventListener("click", continueAfterWin);
-
-bingoBtn.addEventListener("click", () => {
+$("bingoBtn").addEventListener("click", () => {
   if (isPaperMode()) {
     paperBingoPause();
   } else {
-    bingoSound.currentTime = 0;
-    bingoSound.play().catch(() => {});
+    playSound(bingoSound);
   }
 });
 
-toggleSpeakBtn.addEventListener("click", () => {
-  speakEnabled = !speakEnabled;
-  toggleSpeakBtn.textContent = `🔊 Tal: ${speakEnabled ? "På" : "Av"}`;
-});
-
-actionBtn.addEventListener("click", () => {
-  if (actionBtn.dataset.action === "next-round") {
+$("actionBtn").addEventListener("click", () => {
+  if ($("actionBtn").dataset.action === "next-round") {
     nextAdultRound();
   } else {
     resetGame();
@@ -1591,26 +2117,59 @@ actionBtn.addEventListener("click", () => {
   }
 });
 
-paperSpeedSelect.addEventListener("change", () => {
-  if (isPaperMode() && intervalId) {
-    stopGame();
-    intervalId = setInterval(drawNumber, Number(paperSpeedSelect.value));
+$("gameMode").addEventListener("change", () => {
+  refreshModeUI();
+  resetGame();
+});
+
+$("playerCount").addEventListener("change", () => {
+  if (!isAdultMode() && !isPaperMode()) {
+    resetGame();
   }
 });
 
-moneyEnabledInput.addEventListener("change", () => {
+$("paperSpeed").addEventListener("change", () => {
+  if (isPaperMode() && intervalId !== null) {
+    stopGame();
+
+    intervalId = setInterval(
+      drawNumber,
+      Number($("paperSpeed").value)
+    );
+  }
+});
+
+$("moneyEnabled").addEventListener("change", () => {
   if (!adultRoundPrepared) {
-    adultSession.moneyEnabled = moneyEnabledInput.checked;
+    adultSession.moneyEnabled =
+      $("moneyEnabled").checked;
+
     renderAdultPots();
   }
 });
 
-window.addEventListener("load", () => {
+/* =====================================================
+   STARTA HEMSIDAN
+===================================================== */
+
+function initialize() {
   createAdultPlayerConfig();
+
   loadMusicSettings();
+
   refreshModeUI();
   resetGame();
-});
+
+  /*
+    Försök starta musiken direkt när
+    besökaren öppnar hemsidan.
+  */
+
+  playMusic();
+}
+
+initialize();
+
 </script>
 
 </body>
